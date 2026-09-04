@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f7f7f2"/>
+  <circle cx="1050" cy="-20" r="360" fill="#dff3e9"/>
+  <path d="M90 450V180h78l87 145 87-145h78v270h-68V286l-97 156-97-156v164z" fill="#0d6b47"/>
+  <text x="500" y="285" font-family="-apple-system, sans-serif" font-size="82" font-weight="750" fill="#172019">Minseok.dev</text>
+  <text x="505" y="365" font-family="-apple-system, sans-serif" font-size="34" fill="#657067">Swift와 소프트웨어 개발 기록</text>
+</svg>
