@@ -55,12 +55,16 @@ public struct SiteGenerator: Sendable {
       throw SiteGenerationError.missingPublicDirectory(publicDirectory.path)
     }
 
+    let series = try SeriesLoader().loadSeries(
+      from: root.appendingPathComponent("Content/Series", isDirectory: true))
     let posts = try ContentLoader().loadPosts(
       from: contentDirectory,
       publicDirectory: publicDirectory,
       now: now,
-      includeDrafts: includeDrafts
+      includeDrafts: includeDrafts,
+      series: series
     )
+    let catalog = SeriesCatalog(series: series, posts: posts)
     let tags = posts.sortedTagsForSite
     let staging = output.deletingLastPathComponent()
       .appendingPathComponent(".site-staging-\(UUID().uuidString)", isDirectory: true)
@@ -74,14 +78,27 @@ public struct SiteGenerator: Sendable {
       var pages: [(SiteRoute, String)] = [
         (.home, HomeView().render(posts: posts, layout: layout)),
         (.posts, PostListView().render(posts: posts, layout: layout)),
-        (.seriesList, SeriesListView().render(catalog: SeriesCatalog(series: [], posts: posts), layout: layout)),
+        (.seriesList, SeriesListView().render(catalog: catalog, layout: layout)),
         (.about, AboutView().render(layout: layout)),
         (.notFound, NotFoundView().render(layout: layout)),
       ]
       pages.append(
         contentsOf: posts.map { post in
-          (.post(slug: post.slug), PostDetailView().render(post: post, layout: layout))
+          (
+            .post(slug: post.slug),
+            PostDetailView().render(post: post, layout: layout, series: catalog.context(for: post))
+          )
         })
+      for entry in catalog.entries {
+        pages.append((.series(entry.series.slug), SeriesView().render(entry: entry, layout: layout)))
+        pages.append(
+          contentsOf: entry.topics.map { topic in
+            (
+              .topic(series: entry.series.slug, topic: topic.topic.slug),
+              TopicView().render(series: entry, topic: topic, layout: layout)
+            )
+          })
+      }
       pages.append(
         contentsOf: tags.map { tag in
           let taggedPosts = posts.filter { post in
@@ -97,7 +114,8 @@ public struct SiteGenerator: Sendable {
         AtomFeed.render(posts: posts, configuration: configuration), route: .feed,
         relativePath: SiteRoute.feed.outputPath, to: staging)
       try write(
-        Sitemap.render(posts: posts, tags: tags, configuration: configuration), route: .sitemap,
+        Sitemap.render(posts: posts, tags: tags, catalog: catalog, configuration: configuration),
+        route: .sitemap,
         relativePath: SiteRoute.sitemap.outputPath, to: staging)
       try write(
         Robots.render(configuration: configuration), route: .robots,

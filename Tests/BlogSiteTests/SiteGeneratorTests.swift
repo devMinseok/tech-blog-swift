@@ -1,3 +1,4 @@
+import BlogCore
 import BlogRouter
 import BlogSite
 import Foundation
@@ -42,6 +43,7 @@ final class SiteGeneratorTests: XCTestCase {
     for path in [
       "index.html", "posts/hello-swift/index.html", "tags/Swift/index.html",
       "tags/Swift 동시성/index.html", "feed.xml", "sitemap.xml", "robots.txt", "404.html", ".nojekyll",
+      "series/index.html",
     ] {
       XCTAssertTrue(
         FileManager.default.fileExists(atPath: output.appendingPathComponent(path).path), path)
@@ -57,6 +59,54 @@ final class SiteGeneratorTests: XCTestCase {
         now: try XCTUnwrap(formatter.date(from: "2026-09-01"))
       )
     )
+  }
+
+  func testGeneratesSeriesPages() throws {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(
+      UUID().uuidString, isDirectory: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    for asset in ["styles/site.css", "scripts/site.js", "scripts/syntax.js", "favicon.svg"] {
+      try write("", to: root, "Public/\(asset)")
+    }
+    try write(
+      postSource.replacingOccurrences(
+        of: "draft: false", with: "draft: false\nseries: teardown\ntopic: spm\npart: 1"),
+      to: root, "Content/Posts/post.md")
+    try write(
+      "---\nslug: teardown\ntitle: 뜯어보기\nsummary: 원초적인 걸 파봅니다.\n---\n\n소개",
+      to: root, "Content/Series/teardown/_series.md")
+    try write(
+      "---\nslug: spm\ntitle: SPM 뜯어보기\nsummary: Package.swift부터\n---\n\n소개",
+      to: root, "Content/Series/teardown/spm.md")
+
+    let output = root.appendingPathComponent("output", isDirectory: true)
+    let configuration = SiteConfiguration(
+      baseURL: "https://owner.github.io", basePath: "/repo", repository: "owner/repo")
+    try SiteGenerator(configuration: configuration).generate(
+      repositoryRoot: root, outputDirectory: output,
+      now: try XCTUnwrap(BlogDate.parse("2026-09-01")))
+
+    for path in [
+      "series/index.html", "series/teardown/index.html", "series/teardown/spm/index.html",
+    ] {
+      XCTAssertTrue(
+        FileManager.default.fileExists(atPath: output.appendingPathComponent(path).path), path)
+    }
+    func read(_ path: String) throws -> String {
+      try String(contentsOf: output.appendingPathComponent(path), encoding: .utf8)
+    }
+    XCTAssertTrue(try read("posts/hello-swift/index.html").contains("/repo/series/teardown/spm/"))
+    XCTAssertTrue(try read("feed.xml").contains("Hello Swift"))
+    XCTAssertTrue(try read("tags/Swift/index.html").contains("Hello Swift"))
+    XCTAssertTrue(
+      try read("sitemap.xml").contains("https://owner.github.io/repo/series/teardown/spm/"))
+  }
+
+  private func write(_ value: String, to root: URL, _ relativePath: String) throws {
+    let url = root.appendingPathComponent(relativePath)
+    try FileManager.default.createDirectory(
+      at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+    try value.write(to: url, atomically: true, encoding: .utf8)
   }
 
   private var postSource: String {
