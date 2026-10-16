@@ -16,17 +16,9 @@ public struct PostDetailView: Sendable {
         "header",
         [("class", "post-header")],
         series.map { seriesTrail($0, router: layout.router) } ?? fragment([]),
-        element(
-          "div", [("class", "post-meta")],
-          element(
-            "time", [("datetime", BlogDate.machine(post.publishedAt))],
-            .text(BlogDate.display(post.publishedAt))),
-          .text(" · \(post.estimatedReadingMinutes)분 읽기")),
         element("h1", [], .text(post.title)),
         element("p", [("class", "post-lede")], .text(post.summary)),
-        element(
-          "div", [("class", "tag-cloud")],
-          fragment(post.tags.map { tagLink($0, router: layout.router) })),
+        byline(post: post, author: layout.configuration.authorName),
         post.coverImage.map {
           element(
             "img",
@@ -39,6 +31,11 @@ public struct PostDetailView: Sendable {
         } ?? fragment([])
       ),
       element("div", [("class", "prose")], .raw(markdown)),
+      post.tags.isEmpty
+        ? fragment([])
+        : element(
+          "div", [("class", "tag-cloud post-tags")],
+          fragment(post.tags.map { tagLink($0, router: layout.router) })),
       series.map { partNavigation($0, router: layout.router) } ?? fragment([]),
       element(
         "footer",
@@ -60,6 +57,22 @@ public struct PostDetailView: Sendable {
         socialImage: post.coverImage
       ),
       body: body
+    )
+  }
+
+  private func byline(post: BlogPost, author: String) -> Node {
+    element(
+      "div", [("class", "byline")],
+      element("span", [("class", "byline__avatar"), ("aria-hidden", "true")], .text(String(author.prefix(1)))),
+      element(
+        "div", [("class", "byline__text")],
+        element("span", [("class", "byline__name")], .text(author)),
+        element(
+          "span", [("class", "post-meta")],
+          .text("\(post.estimatedReadingMinutes)분 읽기 · "),
+          element(
+            "time", [("datetime", BlogDate.machine(post.publishedAt))],
+            .text(BlogDate.display(post.publishedAt)))))
     )
   }
 
