@@ -72,3 +72,24 @@ extension Collection where Element == BlogPost {
     }
   }
 }
+
+func seriesCard(title: String, summary: String, meta: String, href: String) -> Node {
+  element(
+    "article",
+    [("class", "post-card series-card")],
+    element("div", [("class", "post-card__meta")], .text(meta)),
+    element(
+      "h2", [("class", "post-card__title")],
+      element("a", [("href", href)], .text(title))),
+    element("p", [("class", "post-card__summary")], .text(summary))
+  )
+}
+
+extension TopicStatus {
+  var label: String {
+    switch self {
+    case .ongoing: "연재 중"
+    case .completed: "완결"
+    }
+  }
+}

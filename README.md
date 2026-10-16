@@ -47,6 +47,47 @@ coverImage: /images/posts/example.png
 - 대표 이미지를 쓸 때는 `Public` 아래의 실제 파일 경로를 지정합니다.
 - 초안을 포함한 로컬 빌드는 `swift run BlogBuilder --include-drafts`를 사용합니다.
 
+## 시리즈
+
+시리즈는 **시리즈 → 주제 → 편** 3단계입니다. 시리즈마다 `Content/Series/<시리즈 slug>/` 디렉터리를 두고, 그 안에 시리즈 정의 `_series.md`와 주제 파일을 둡니다.
+
+```markdown
+<!-- Content/Series/teardown/_series.md -->
+---
+slug: teardown
+title: 뜯어보기
+summary: 시리즈 한 줄 설명
+---
+
+시리즈 소개 (Markdown)
+```
+
+```markdown
+<!-- Content/Series/teardown/spm.md -->
+---
+slug: spm
+title: SPM 뜯어보기
+summary: 주제 한 줄 설명
+status: ongoing
+---
+
+주제 소개 (Markdown)
+```
+
+글을 주제에 넣을 때는 front matter에 세 줄을 추가합니다.
+
+```markdown
+series: teardown
+topic: spm
+part: 1
+```
+
+- 시리즈 `slug`는 디렉터리 이름과 같아야 합니다. 주제 `slug`는 같은 시리즈 안에서만 유일하면 됩니다.
+- `status`는 `ongoing`(연재 중) 또는 `completed`(완결)이며 생략하면 `ongoing`입니다.
+- 편 순서는 날짜가 아니라 `part` 번호로 정합니다. 같은 주제에서 `part`가 겹치면 빌드가 실패합니다.
+- 없는 시리즈나 주제를 가리키면 빌드가 실패합니다.
+- 공개된 편이 없는 주제와, 공개된 주제가 없는 시리즈는 사이트에 표시되지 않습니다.
+
 ## giscus 댓글과 반응
 
 댓글과 좋아요 역할의 reaction은 GitHub Discussions 기반 giscus가 담당합니다.
@@ -77,6 +118,7 @@ coverImage: /images/posts/example.png
 
 ```text
 Content/Posts       Markdown 원문
+Content/Series      시리즈와 주제 정의
 Public              CSS, JavaScript, 이미지
 Sources/BlogCore    콘텐츠 모델과 검증
 Sources/BlogRouter  URL 및 출력 경로

@@ -18,6 +18,15 @@ public enum ContentError: Error, LocalizedError, Equatable {
   case duplicateIdentifier(String)
   case missingCoverImage(file: String, path: String)
   case invalidCoverImage(file: String, path: String)
+  case missingSeriesDefinition(directory: String)
+  case seriesSlugMismatch(file: String, slug: String, directory: String)
+  case duplicateTopic(series: String, topic: String)
+  case invalidTopicStatus(file: String, value: String)
+  case incompleteSeriesMembership(file: String)
+  case invalidPart(file: String, value: String)
+  case unknownSeries(file: String, series: String)
+  case unknownTopic(file: String, series: String, topic: String)
+  case duplicatePart(series: String, topic: String, part: Int)
 
   public var errorDescription: String? {
     switch self {
@@ -53,6 +62,24 @@ public enum ContentError: Error, LocalizedError, Equatable {
       "\(file): 대표 이미지 파일을 찾을 수 없습니다: \(path)"
     case .invalidCoverImage(let file, let path):
       "\(file): 대표 이미지는 Public 안의 루트 상대 경로여야 합니다: \(path)"
+    case .missingSeriesDefinition(let directory):
+      "\(directory): 시리즈 정의 파일 _series.md가 없습니다."
+    case .seriesSlugMismatch(let file, let slug, let directory):
+      "\(file): 시리즈 slug는 디렉터리 이름과 같아야 합니다: \(slug) ≠ \(directory)"
+    case .duplicateTopic(let series, let topic):
+      "\(series): 중복된 주제 slug입니다: \(topic)"
+    case .invalidTopicStatus(let file, let value):
+      "\(file): status는 ongoing 또는 completed여야 합니다: \(value)"
+    case .incompleteSeriesMembership(let file):
+      "\(file): series, topic, part는 모두 있거나 모두 없어야 합니다."
+    case .invalidPart(let file, let value):
+      "\(file): part는 1 이상의 정수여야 합니다: \(value)"
+    case .unknownSeries(let file, let series):
+      "\(file): 존재하지 않는 시리즈입니다: \(series)"
+    case .unknownTopic(let file, let series, let topic):
+      "\(file): \(series) 시리즈에 없는 주제입니다: \(topic)"
+    case .duplicatePart(let series, let topic, let part):
+      "\(series)/\(topic): \(part)편이 중복되었습니다."
     }
   }
 }
@@ -64,7 +91,8 @@ public struct ContentLoader: Sendable {
     from directory: URL,
     publicDirectory: URL? = nil,
     now: Date = Date(),
-    includeDrafts: Bool = false
+    includeDrafts: Bool = false,
+    series: [Series] = []
   ) throws -> [BlogPost] {
     var isDirectory: ObjCBool = false
     guard FileManager.default.fileExists(atPath: directory.path, isDirectory: &isDirectory),
@@ -84,6 +112,8 @@ public struct ContentLoader: Sendable {
     var posts: [BlogPost] = []
     var slugs = Set<String>()
     var identifiers = Set<String>()
+    var parts = Set<String>()
+    let seriesBySlug = Dictionary(uniqueKeysWithValues: series.map { ($0.slug, $0) })
 
     for fileURL in files {
       let source = try String(contentsOf: fileURL, encoding: .utf8)
@@ -94,6 +124,21 @@ public struct ContentLoader: Sendable {
       }
       guard identifiers.insert(post.id).inserted else {
         throw ContentError.duplicateIdentifier(post.id)
+      }
+
+      if let membership = post.membership {
+        guard let owner = seriesBySlug[membership.series] else {
+          throw ContentError.unknownSeries(file: post.sourceFile, series: membership.series)
+        }
+        guard owner.topics.contains(where: { $0.slug == membership.topic }) else {
+          throw ContentError.unknownTopic(
+            file: post.sourceFile, series: membership.series, topic: membership.topic)
+        }
+        guard parts.insert("\(membership.series)/\(membership.topic)/\(membership.part)").inserted
+        else {
+          throw ContentError.duplicatePart(
+            series: membership.series, topic: membership.topic, part: membership.part)
+        }
       }
 
       if let coverImage = post.coverImage {
@@ -163,6 +208,21 @@ public struct ContentLoader: Sendable {
     }
     _ = Document(parsing: frontMatter.body)
 
+    let membershipValues = [frontMatter["series"], frontMatter["topic"], frontMatter["part"]]
+      .map { $0.flatMap { $0.isEmpty ? nil : $0 } }
+    var membership: SeriesMembership?
+    if membershipValues.contains(where: { $0 != nil }) {
+      guard let series = membershipValues[0], let topic = membershipValues[1],
+        let partValue = membershipValues[2]
+      else {
+        throw ContentError.incompleteSeriesMembership(file: file)
+      }
+      guard let part = Int(partValue), part >= 1 else {
+        throw ContentError.invalidPart(file: file, value: partValue)
+      }
+      membership = SeriesMembership(series: series, topic: topic, part: part)
+    }
+
     return BlogPost(
       id: id,
       title: try required("title"),
@@ -173,7 +233,8 @@ public struct ContentLoader: Sendable {
       isDraft: isDraft,
       coverImage: frontMatter["coverImage"].flatMap { $0.isEmpty ? nil : $0 },
       content: frontMatter.body,
-      sourceFile: file
+      sourceFile: file,
+      membership: membership
     )
   }
 

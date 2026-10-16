@@ -1,5 +1,17 @@
 import Foundation
 
+public struct SeriesMembership: Sendable, Equatable {
+  public let series: String
+  public let topic: String
+  public let part: Int
+
+  public init(series: String, topic: String, part: Int) {
+    self.series = series
+    self.topic = topic
+    self.part = part
+  }
+}
+
 public struct BlogPost: Identifiable, Sendable, Equatable {
   public let id: String
   public let title: String
@@ -11,6 +23,7 @@ public struct BlogPost: Identifiable, Sendable, Equatable {
   public let coverImage: String?
   public let content: String
   public let sourceFile: String
+  public let membership: SeriesMembership?
 
   public init(
     id: String,
@@ -22,7 +35,8 @@ public struct BlogPost: Identifiable, Sendable, Equatable {
     isDraft: Bool,
     coverImage: String?,
     content: String,
-    sourceFile: String
+    sourceFile: String,
+    membership: SeriesMembership? = nil
   ) {
     self.id = id
     self.title = title
@@ -34,6 +48,7 @@ public struct BlogPost: Identifiable, Sendable, Equatable {
     self.coverImage = coverImage
     self.content = content
     self.sourceFile = sourceFile
+    self.membership = membership
   }
 
   public var estimatedReadingMinutes: Int {

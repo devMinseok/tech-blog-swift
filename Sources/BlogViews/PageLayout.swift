@@ -162,6 +162,11 @@ public struct PageLayout: Sendable {
     case .posts, .post, .tag: postsSelected = true
     default: postsSelected = false
     }
+    let seriesSelected: Bool
+    switch current {
+    case .seriesList, .series, .topic: seriesSelected = true
+    default: seriesSelected = false
+    }
 
     return element(
       "header",
@@ -176,6 +181,7 @@ public struct PageLayout: Sendable {
           "nav",
           [("aria-label", "주요 메뉴")],
           navLink("글", route: .posts, selected: postsSelected),
+          navLink("시리즈", route: .seriesList, selected: seriesSelected),
           navLink("소개", route: .about, selected: current == .about),
           element(
             "button",

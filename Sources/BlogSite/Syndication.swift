@@ -36,12 +36,20 @@ enum AtomFeed {
 }
 
 enum Sitemap {
-  static func render(posts: [BlogPost], tags: [String], configuration: SiteConfiguration) -> String
-  {
+  static func render(
+    posts: [BlogPost], tags: [String], catalog: SeriesCatalog, configuration: SiteConfiguration
+  ) -> String {
     var routes: [(SiteRoute, Date?)] = [
       (.home, posts.first?.publishedAt), (.posts, posts.first?.publishedAt), (.about, nil),
     ]
     routes += posts.map { (.post(slug: $0.slug), $0.publishedAt) }
+    routes.append((.seriesList, catalog.entries.first?.latestPublishedAt))
+    for entry in catalog.entries {
+      routes.append((.series(entry.series.slug), entry.latestPublishedAt))
+      routes += entry.topics.map {
+        (.topic(series: entry.series.slug, topic: $0.topic.slug), $0.latestPublishedAt)
+      }
+    }
     routes += tags.map { tag in
       (
         .tag(tag),
