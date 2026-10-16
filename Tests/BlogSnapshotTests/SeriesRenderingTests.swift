@@ -51,6 +51,46 @@ final class SeriesRenderingTests: XCTestCase {
     XCTAssertTrue(about.contains("<a href=\"/repo/series/\">시리즈</a>"))
   }
 
+  func testSeriesPostShowsTrailAndNeighbors() throws {
+    let first = try post(part: 1, title: "첫 편", summary: "s")
+    let second = try post(part: 2, title: "둘째 편", summary: "s")
+    let third = try post(part: 3, title: "셋째 편", summary: "s")
+    let catalog = SeriesCatalog(series: [try catalog(status: .ongoing).entries[0].series], posts: [first, second, third])
+    let context = try XCTUnwrap(catalog.context(for: second))
+    let html = PostDetailView().render(post: second, layout: layout, series: context)
+
+    XCTAssertTrue(html.contains("href=\"/repo/series/teardown/\""))
+    XCTAssertTrue(html.contains("href=\"/repo/series/teardown/spm/\""))
+    XCTAssertTrue(html.contains("· 2편"))
+    XCTAssertTrue(html.contains("← 1편"))
+    XCTAssertTrue(html.contains("3편 →"))
+    XCTAssertTrue(html.contains("href=\"/repo/posts/spm-1/\""))
+    XCTAssertTrue(html.contains("href=\"/repo/posts/spm-3/\""))
+    let trail = try XCTUnwrap(html.range(of: "series-trail"))
+    let heading = try XCTUnwrap(html.range(of: "<h1>"))
+    XCTAssertLessThan(trail.lowerBound, heading.lowerBound)
+    let partNav = try XCTUnwrap(html.range(of: "part-nav"))
+    let comments = try XCTUnwrap(html.range(of: "comments-title"))
+    XCTAssertLessThan(partNav.lowerBound, comments.lowerBound)
+  }
+
+  func testFirstPartHasNoPrevious() throws {
+    let first = try post(part: 1, title: "첫 편", summary: "s")
+    let second = try post(part: 2, title: "둘째 편", summary: "s")
+    let catalog = SeriesCatalog(series: [try catalog(status: .ongoing).entries[0].series], posts: [first, second])
+    let html = PostDetailView().render(
+      post: first, layout: layout, series: try XCTUnwrap(catalog.context(for: first)))
+    XCTAssertFalse(html.contains("←"))
+    XCTAssertTrue(html.contains("2편 →"))
+  }
+
+  func testStandalonePostUnchanged() throws {
+    let html = PostDetailView().render(
+      post: try post(part: 1, title: "첫 편", summary: "s"), layout: layout)
+    XCTAssertFalse(html.contains("series-trail"))
+    XCTAssertFalse(html.contains("part-nav"))
+  }
+
   private func catalog(status: TopicStatus) throws -> SeriesCatalog {
     let topic = Topic(
       slug: "spm", title: "SPM 뜯어보기", summary: "Package.swift부터", status: status,

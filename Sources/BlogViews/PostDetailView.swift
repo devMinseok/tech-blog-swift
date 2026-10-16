@@ -5,7 +5,9 @@ import Html
 public struct PostDetailView: Sendable {
   public init() {}
 
-  public func render(post: BlogPost, layout: PageLayout) -> String {
+  public func render(
+    post: BlogPost, layout: PageLayout, series: PostSeriesContext? = nil
+  ) -> String {
     let markdown = MarkdownRenderer(basePath: layout.configuration.basePath).render(post.content)
     let body = element(
       "article",
@@ -13,6 +15,7 @@ public struct PostDetailView: Sendable {
       element(
         "header",
         [("class", "post-header")],
+        series.map { seriesTrail($0, router: layout.router) } ?? fragment([]),
         element(
           "div", [("class", "post-meta")],
           element(
@@ -36,6 +39,7 @@ public struct PostDetailView: Sendable {
         } ?? fragment([])
       ),
       element("div", [("class", "prose")], .raw(markdown)),
+      series.map { partNavigation($0, router: layout.router) } ?? fragment([]),
       element(
         "footer",
         [("class", "post-footer")],
@@ -56,6 +60,41 @@ public struct PostDetailView: Sendable {
         socialImage: post.coverImage
       ),
       body: body
+    )
+  }
+
+  private func seriesTrail(_ context: PostSeriesContext, router: BlogRouter) -> Node {
+    element(
+      "nav",
+      [("class", "series-trail"), ("aria-label", "시리즈 위치")],
+      element("a", [("href", router.path(for: .series(context.series.slug)))], .text(context.series.title)),
+      .text(" › "),
+      element(
+        "a",
+        [("href", router.path(for: .topic(series: context.series.slug, topic: context.topic.slug)))],
+        .text(context.topic.title)),
+      .text(" · \(context.part)편")
+    )
+  }
+
+  private func partNavigation(_ context: PostSeriesContext, router: BlogRouter) -> Node {
+    func link(_ post: BlogPost?, label: (Int) -> String, className: String) -> Node {
+      guard let post, let part = post.membership?.part else {
+        return element("span", [("class", "part-nav__empty")])
+      }
+      return element(
+        "a",
+        [("class", "part-nav__link \(className)"), ("href", router.path(for: .post(slug: post.slug)))],
+        element("small", [], .text(label(part))),
+        element("span", [], .text(post.title))
+      )
+    }
+
+    return element(
+      "nav",
+      [("class", "part-nav"), ("aria-label", "이전 편과 다음 편")],
+      link(context.previous, label: { "← \($0)편" }, className: "part-nav__link--previous"),
+      link(context.next, label: { "\($0)편 →" }, className: "part-nav__link--next")
     )
   }
 
