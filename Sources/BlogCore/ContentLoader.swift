@@ -18,6 +18,10 @@ public enum ContentError: Error, LocalizedError, Equatable {
   case duplicateIdentifier(String)
   case missingCoverImage(file: String, path: String)
   case invalidCoverImage(file: String, path: String)
+  case missingSeriesDefinition(directory: String)
+  case seriesSlugMismatch(file: String, slug: String, directory: String)
+  case duplicateTopic(series: String, topic: String)
+  case invalidTopicStatus(file: String, value: String)
 
   public var errorDescription: String? {
     switch self {
@@ -53,6 +57,14 @@ public enum ContentError: Error, LocalizedError, Equatable {
       "\(file): 대표 이미지 파일을 찾을 수 없습니다: \(path)"
     case .invalidCoverImage(let file, let path):
       "\(file): 대표 이미지는 Public 안의 루트 상대 경로여야 합니다: \(path)"
+    case .missingSeriesDefinition(let directory):
+      "\(directory): 시리즈 정의 파일 _series.md가 없습니다."
+    case .seriesSlugMismatch(let file, let slug, let directory):
+      "\(file): 시리즈 slug는 디렉터리 이름과 같아야 합니다: \(slug) ≠ \(directory)"
+    case .duplicateTopic(let series, let topic):
+      "\(series): 중복된 주제 slug입니다: \(topic)"
+    case .invalidTopicStatus(let file, let value):
+      "\(file): status는 ongoing 또는 completed여야 합니다: \(value)"
     }
   }
 }
