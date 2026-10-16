@@ -37,24 +37,38 @@ func tagLink(_ tag: String, router: BlogRouter) -> Node {
 }
 
 func postCard(_ post: BlogPost, router: BlogRouter) -> Node {
-  element(
-    "article",
-    [("class", "post-card")],
-    element(
-      "div",
-      [("class", "post-card__meta")],
-      element(
-        "time", [("datetime", BlogDate.machine(post.publishedAt))],
-        .text(BlogDate.display(post.publishedAt))),
-      .text(" · \(post.estimatedReadingMinutes)분")
-    ),
+  let body = element(
+    "div",
+    [("class", "post-card__body")],
     element(
       "h2",
       [("class", "post-card__title")],
       element("a", [("href", router.path(for: .post(slug: post.slug)))], .text(post.title))
     ),
     element("p", [("class", "post-card__summary")], .text(post.summary)),
-    fragment(post.tags.map { tagLink($0, router: router) })
+    element(
+      "div",
+      [("class", "post-card__meta")],
+      element(
+        "time", [("datetime", BlogDate.machine(post.publishedAt))],
+        .text(BlogDate.display(post.publishedAt))),
+      .text("· \(post.estimatedReadingMinutes)분 읽기"),
+      fragment(post.tags.prefix(2).map { tagLink($0, router: router) })
+    )
+  )
+  guard let coverImage = post.coverImage else {
+    return element("article", [("class", "post-card")], body)
+  }
+  return element(
+    "article",
+    [("class", "post-card post-card--with-cover")],
+    body,
+    element(
+      "img",
+      [
+        ("class", "post-card__thumb"), ("src", router.configuration.assetPath(coverImage)),
+        ("alt", ""), ("loading", "lazy"),
+      ])
   )
 }
 
