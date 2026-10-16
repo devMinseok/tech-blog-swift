@@ -78,6 +78,8 @@ public struct PostDetailView: Sendable {
   }
 
   private func partNavigation(_ context: PostSeriesContext, router: BlogRouter) -> Node {
+    guard context.previous != nil || context.next != nil else { return fragment([]) }
+
     func link(_ post: BlogPost?, label: (Int) -> String, className: String) -> Node {
       guard let post, let part = post.membership?.part else {
         return element("span", [("class", "part-nav__empty")])

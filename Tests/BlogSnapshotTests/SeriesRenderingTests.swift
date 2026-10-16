@@ -91,6 +91,26 @@ final class SeriesRenderingTests: XCTestCase {
     XCTAssertFalse(html.contains("part-nav"))
   }
 
+  func testSinglePartTopicHasNoPartNavigation() throws {
+    let only = try post(part: 1, title: "유일한 편", summary: "s")
+    let catalog = SeriesCatalog(
+      series: [try catalog(status: .completed).entries[0].series], posts: [only])
+    let html = PostDetailView().render(
+      post: only, layout: layout, series: try XCTUnwrap(catalog.context(for: only)))
+    XCTAssertTrue(html.contains("series-trail"))
+    XCTAssertFalse(html.contains("part-nav"))
+  }
+
+  func testSeriesTrailDoesNotInheritFlexNavigationLayout() throws {
+    let stylesheet = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .appendingPathComponent("Public/styles/site.css")
+    let css = try String(contentsOf: stylesheet, encoding: .utf8)
+    let rule = try XCTUnwrap(
+      css.split(separator: "\n").first { $0.hasPrefix(".series-trail {") })
+    XCTAssertTrue(rule.contains("display: block"))
+  }
+
   private func catalog(status: TopicStatus) throws -> SeriesCatalog {
     let topic = Topic(
       slug: "spm", title: "SPM 뜯어보기", summary: "Package.swift부터", status: status,
