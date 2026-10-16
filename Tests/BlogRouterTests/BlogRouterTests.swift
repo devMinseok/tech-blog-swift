@@ -27,4 +27,31 @@ final class BlogRouterTests: XCTestCase {
       try router.match(path: "/tech-blog/posts/hello-swift/"), .post(slug: "hello-swift"))
     XCTAssertEqual(try router.match(path: "/tech-blog/about/"), .about)
   }
+
+  func testSeriesPaths() {
+    let router = BlogRouter(configuration: configuration)
+    XCTAssertEqual(router.path(for: .seriesList), "/tech-blog/series/")
+    XCTAssertEqual(router.path(for: .series("teardown")), "/tech-blog/series/teardown/")
+    XCTAssertEqual(
+      router.path(for: .topic(series: "teardown", topic: "spm")), "/tech-blog/series/teardown/spm/")
+    XCTAssertEqual(router.outputPath(for: .seriesList), "series/index.html")
+    XCTAssertEqual(router.outputPath(for: .series("teardown")), "series/teardown/index.html")
+    XCTAssertEqual(
+      router.outputPath(for: .topic(series: "teardown", topic: "spm")),
+      "series/teardown/spm/index.html")
+  }
+
+  func testSeriesPathsWithoutBasePath() {
+    let router = BlogRouter(configuration: SiteConfiguration(baseURL: "http://localhost:8000"))
+    XCTAssertEqual(router.path(for: .series("teardown")), "/series/teardown/")
+  }
+
+  func testMatchesSeriesPaths() throws {
+    let router = BlogRouter(configuration: configuration)
+    XCTAssertEqual(try router.match(path: "/tech-blog/series/"), .seriesList)
+    XCTAssertEqual(try router.match(path: "/tech-blog/series/teardown/"), .series("teardown"))
+    XCTAssertEqual(
+      try router.match(path: "/tech-blog/series/teardown/spm/"),
+      .topic(series: "teardown", topic: "spm"))
+  }
 }

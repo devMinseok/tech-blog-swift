@@ -6,6 +6,9 @@ public enum SiteRoute: Equatable, Sendable {
   case posts
   case post(slug: String)
   case tag(String)
+  case seriesList
+  case series(String)
+  case topic(series: String, topic: String)
   case about
   case feed
   case sitemap
@@ -34,6 +37,25 @@ private struct SiteRouteParser: Parser {
           "tags"
           Parse(.string)
         }
+      }
+
+      Route(SiteRoute.topic(series:topic:)) {
+        Path {
+          "series"
+          Parse(.string)
+          Parse(.string)
+        }
+      }
+
+      Route(SiteRoute.series) {
+        Path {
+          "series"
+          Parse(.string)
+        }
+      }
+
+      Route(SiteRoute.seriesList) {
+        Path { "series" }
       }
 
       Route(SiteRoute.about) {
@@ -170,6 +192,9 @@ extension SiteRoute {
     case .posts: "/posts/"
     case .post(let slug): "/posts/\(slug)/"
     case .tag(let tag): "/tags/\(tag.urlPathComponent)/"
+    case .seriesList: "/series/"
+    case .series(let series): "/series/\(series)/"
+    case .topic(let series, let topic): "/series/\(series)/\(topic)/"
     case .about: "/about/"
     case .feed: "/feed.xml"
     case .sitemap: "/sitemap.xml"
@@ -184,6 +209,9 @@ extension SiteRoute {
     case .posts: "posts/index.html"
     case .post(let slug): "posts/\(slug)/index.html"
     case .tag(let tag): "tags/\(tag)/index.html"
+    case .seriesList: "series/index.html"
+    case .series(let series): "series/\(series)/index.html"
+    case .topic(let series, let topic): "series/\(series)/\(topic)/index.html"
     case .about: "about/index.html"
     case .feed: "feed.xml"
     case .sitemap: "sitemap.xml"
