@@ -74,6 +74,7 @@ public struct SiteGenerator: Sendable {
       var pages: [(SiteRoute, String)] = [
         (.home, HomeView().render(posts: posts, layout: layout)),
         (.posts, PostListView().render(posts: posts, layout: layout)),
+        (.seriesList, SeriesListView().render(catalog: SeriesCatalog(series: [], posts: posts), layout: layout)),
         (.about, AboutView().render(layout: layout)),
         (.notFound, NotFoundView().render(layout: layout)),
       ]
