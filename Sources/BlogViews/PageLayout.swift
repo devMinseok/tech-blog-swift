@@ -68,6 +68,15 @@ public struct PageLayout: Sendable {
           ("rel", "icon"), ("href", configuration.assetPath("favicon.svg")),
           ("type", "image/svg+xml"),
         ]),
+      element("link", [("rel", "preconnect"), ("href", "https://fonts.googleapis.com")]),
+      element(
+        "link", [("rel", "preconnect"), ("href", "https://fonts.gstatic.com"), ("crossorigin", "")]),
+      element(
+        "link",
+        [
+          ("rel", "stylesheet"),
+          ("href", "https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap"),
+        ]),
       element(
         "link", [("rel", "stylesheet"), ("href", configuration.assetPath("styles/site.css"))]),
       element("meta", [("property", "og:site_name"), ("content", configuration.siteName)]),
