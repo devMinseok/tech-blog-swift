@@ -79,6 +79,84 @@ final class ContentLoaderTests: XCTestCase {
     }
   }
 
+  func testParsesSeriesMembership() throws {
+    let post = try ContentLoader().parsePost(member(part: "2"), file: "post.md")
+    XCTAssertEqual(post.membership, SeriesMembership(series: "teardown", topic: "spm", part: 2))
+  }
+
+  func testPostWithoutSeriesHasNoMembership() throws {
+    XCTAssertNil(try ContentLoader().parsePost(validPost).membership)
+  }
+
+  func testRejectsIncompleteMembership() {
+    let source = validPost.replacingOccurrences(
+      of: "draft: false", with: "draft: false\nseries: teardown")
+    XCTAssertThrowsError(try ContentLoader().parsePost(source)) { error in
+      XCTAssertEqual(error as? ContentError, .incompleteSeriesMembership(file: "post.md"))
+    }
+  }
+
+  func testRejectsInvalidPart() {
+    for value in ["0", "two"] {
+      XCTAssertThrowsError(try ContentLoader().parsePost(member(part: value))) { error in
+        XCTAssertEqual(error as? ContentError, .invalidPart(file: "post.md", value: value))
+      }
+    }
+  }
+
+  func testRejectsUnknownSeriesAndTopic() throws {
+    let root = try temporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let file = root.appendingPathComponent("published.md")
+
+    try member(series: "wwdc").write(to: file, atomically: true, encoding: .utf8)
+    XCTAssertThrowsError(try ContentLoader().loadPosts(from: root, series: [teardown])) { error in
+      XCTAssertEqual(error as? ContentError, .unknownSeries(file: "published.md", series: "wwdc"))
+    }
+
+    try member(topic: "swiftpm").write(to: file, atomically: true, encoding: .utf8)
+    XCTAssertThrowsError(try ContentLoader().loadPosts(from: root, series: [teardown])) { error in
+      XCTAssertEqual(
+        error as? ContentError,
+        .unknownTopic(file: "published.md", series: "teardown", topic: "swiftpm"))
+    }
+  }
+
+  func testRejectsDuplicatePartIncludingDrafts() throws {
+    let root = try temporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: root) }
+    try member(part: "1").write(
+      to: root.appendingPathComponent("one.md"), atomically: true, encoding: .utf8)
+    let draft = member(part: "1")
+      .replacingOccurrences(of: "id: post-001", with: "id: post-002")
+      .replacingOccurrences(of: "slug: hello-swift", with: "slug: draft-post")
+      .replacingOccurrences(of: "draft: false", with: "draft: true")
+    try draft.write(to: root.appendingPathComponent("two.md"), atomically: true, encoding: .utf8)
+    XCTAssertThrowsError(try ContentLoader().loadPosts(from: root, series: [teardown])) { error in
+      XCTAssertEqual(
+        error as? ContentError, .duplicatePart(series: "teardown", topic: "spm", part: 1))
+    }
+  }
+
+  private var teardown: Series {
+    Series(
+      slug: "teardown", title: "뜯어보기", summary: "요약", introduction: "소개",
+      topics: [
+        Topic(
+          slug: "spm", title: "SPM", summary: "요약", status: .ongoing, introduction: "소개",
+          sourceFile: "teardown/spm.md")
+      ],
+      sourceFile: "teardown/_series.md")
+  }
+
+  private func member(series: String = "teardown", topic: String = "spm", part: String = "1")
+    -> String
+  {
+    validPost.replacingOccurrences(
+      of: "draft: false",
+      with: "draft: false\nseries: \(series)\ntopic: \(topic)\npart: \(part)")
+  }
+
   private func temporaryDirectory() throws -> URL {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       UUID().uuidString, isDirectory: true)
