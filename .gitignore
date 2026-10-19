@@ -64,5 +64,9 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-# Brainstorming mockups and plan execution scratch
+# AI assistant files (Claude Code, superpowers specs/plans and scratch)
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+docs/superpowers/
 .superpowers/
