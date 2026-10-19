@@ -7,8 +7,12 @@ import XCTest
 final class MediumLayoutTests: XCTestCase {
   private let layout = PageLayout(
     configuration: SiteConfiguration(
-      baseURL: "https://owner.github.io", basePath: "/repo", authorName: "Minseok",
-      repository: "owner/repo"))
+      baseURL: "https://owner.github.io",
+      basePath: "/repo",
+      authorName: "Minseok",
+      repository: "owner/repo"
+    )
+  )
 
   func testPostHeaderShowsBylineAfterTitle() throws {
     let html = PostDetailView().render(post: try post(coverImage: nil), layout: layout)
@@ -58,9 +62,16 @@ final class MediumLayoutTests: XCTestCase {
 
   private func post(coverImage: String?) throws -> BlogPost {
     BlogPost(
-      id: "post", title: "Hello", slug: "hello",
-      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-01")), summary: "Summary",
-      tags: ["Swift"], isDraft: false, coverImage: coverImage, content: "Body",
-      sourceFile: "post.md")
+      id: "post",
+      title: "Hello",
+      slug: "hello",
+      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-01")),
+      summary: "Summary",
+      tags: ["Swift"],
+      isDraft: false,
+      coverImage: coverImage,
+      content: "Body",
+      sourceFile: "post.md"
+    )
   }
 }

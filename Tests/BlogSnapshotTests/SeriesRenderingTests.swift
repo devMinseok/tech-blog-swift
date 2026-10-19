@@ -7,7 +7,11 @@ import XCTest
 final class SeriesRenderingTests: XCTestCase {
   private let layout = PageLayout(
     configuration: SiteConfiguration(
-      baseURL: "https://owner.github.io", basePath: "/repo", repository: "owner/repo"))
+      baseURL: "https://owner.github.io",
+      basePath: "/repo",
+      repository: "owner/repo"
+    )
+  )
 
   func testSeriesPageShowsTopicCards() throws {
     let catalog = try catalog(status: .ongoing)
@@ -34,7 +38,9 @@ final class SeriesRenderingTests: XCTestCase {
 
   func testSeriesListEmptyState() {
     let html = SeriesListView().render(
-      catalog: SeriesCatalog(series: [], posts: []), layout: layout)
+      catalog: SeriesCatalog(series: [], posts: []),
+      layout: layout
+    )
     XCTAssertTrue(html.contains("아직 공개된 시리즈가 없습니다."))
   }
 
@@ -55,7 +61,10 @@ final class SeriesRenderingTests: XCTestCase {
     let first = try post(part: 1, title: "첫 편", summary: "s")
     let second = try post(part: 2, title: "둘째 편", summary: "s")
     let third = try post(part: 3, title: "셋째 편", summary: "s")
-    let catalog = SeriesCatalog(series: [try catalog(status: .ongoing).entries[0].series], posts: [first, second, third])
+    let catalog = SeriesCatalog(
+      series: [try catalog(status: .ongoing).entries[0].series],
+      posts: [first, second, third]
+    )
     let context = try XCTUnwrap(catalog.context(for: second))
     let html = PostDetailView().render(post: second, layout: layout, series: context)
 
@@ -79,14 +88,19 @@ final class SeriesRenderingTests: XCTestCase {
     let second = try post(part: 2, title: "둘째 편", summary: "s")
     let catalog = SeriesCatalog(series: [try catalog(status: .ongoing).entries[0].series], posts: [first, second])
     let html = PostDetailView().render(
-      post: first, layout: layout, series: try XCTUnwrap(catalog.context(for: first)))
+      post: first,
+      layout: layout,
+      series: try XCTUnwrap(catalog.context(for: first))
+    )
     XCTAssertFalse(html.contains("←"))
     XCTAssertTrue(html.contains("2편 →"))
   }
 
   func testStandalonePostUnchanged() throws {
     let html = PostDetailView().render(
-      post: try post(part: 1, title: "첫 편", summary: "s"), layout: layout)
+      post: try post(part: 1, title: "첫 편", summary: "s"),
+      layout: layout
+    )
     XCTAssertFalse(html.contains("series-trail"))
     XCTAssertFalse(html.contains("part-nav"))
   }
@@ -94,9 +108,14 @@ final class SeriesRenderingTests: XCTestCase {
   func testSinglePartTopicHasNoPartNavigation() throws {
     let only = try post(part: 1, title: "유일한 편", summary: "s")
     let catalog = SeriesCatalog(
-      series: [try catalog(status: .completed).entries[0].series], posts: [only])
+      series: [try catalog(status: .completed).entries[0].series],
+      posts: [only]
+    )
     let html = PostDetailView().render(
-      post: only, layout: layout, series: try XCTUnwrap(catalog.context(for: only)))
+      post: only,
+      layout: layout,
+      series: try XCTUnwrap(catalog.context(for: only))
+    )
     XCTAssertTrue(html.contains("series-trail"))
     XCTAssertFalse(html.contains("part-nav"))
   }
@@ -107,17 +126,28 @@ final class SeriesRenderingTests: XCTestCase {
       .appendingPathComponent("Public/styles/site.css")
     let css = try String(contentsOf: stylesheet, encoding: .utf8)
     let rule = try XCTUnwrap(
-      css.split(separator: "\n").first { $0.hasPrefix(".series-trail {") })
+      css.split(separator: "\n").first { $0.hasPrefix(".series-trail {") }
+    )
     XCTAssertTrue(rule.contains("display: block"))
   }
 
   private func catalog(status: TopicStatus) throws -> SeriesCatalog {
     let topic = Topic(
-      slug: "spm", title: "SPM 뜯어보기", summary: "Package.swift부터", status: status,
-      introduction: "주제 소개", sourceFile: "teardown/spm.md")
+      slug: "spm",
+      title: "SPM 뜯어보기",
+      summary: "Package.swift부터",
+      status: status,
+      introduction: "주제 소개",
+      sourceFile: "teardown/spm.md"
+    )
     let series = Series(
-      slug: "teardown", title: "뜯어보기", summary: "원초적인 걸 파봅니다.", introduction: "시리즈 소개",
-      topics: [topic], sourceFile: "teardown/_series.md")
+      slug: "teardown",
+      title: "뜯어보기",
+      summary: "원초적인 걸 파봅니다.",
+      introduction: "시리즈 소개",
+      topics: [topic],
+      sourceFile: "teardown/_series.md"
+    )
     let posts = [
       try post(part: 2, title: "의존성 버전은 어떻게 정해지나", summary: "둘째 편 요약"),
       try post(part: 1, title: "Package.swift는 어떻게 읽히나", summary: "첫 편 요약"),
@@ -127,9 +157,17 @@ final class SeriesRenderingTests: XCTestCase {
 
   private func post(part: Int, title: String, summary: String) throws -> BlogPost {
     BlogPost(
-      id: "spm-\(part)", title: title, slug: "spm-\(part)",
-      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-0\(part)")), summary: summary,
-      tags: [], isDraft: false, coverImage: nil, content: "본문", sourceFile: "spm-\(part).md",
-      membership: SeriesMembership(series: "teardown", topic: "spm", part: part))
+      id: "spm-\(part)",
+      title: title,
+      slug: "spm-\(part)",
+      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-0\(part)")),
+      summary: summary,
+      tags: [],
+      isDraft: false,
+      coverImage: nil,
+      content: "본문",
+      sourceFile: "spm-\(part).md",
+      membership: SeriesMembership(series: "teardown", topic: "spm", part: part)
+    )
   }
 }

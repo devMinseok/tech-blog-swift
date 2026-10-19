@@ -61,24 +61,31 @@ public struct PageLayout: Sendable {
         [
           ("rel", "alternate"), ("type", "application/atom+xml"), ("title", configuration.siteName),
           ("href", router.path(for: .feed)),
-        ]),
+        ]
+      ),
       element(
         "link",
         [
           ("rel", "icon"), ("href", configuration.assetPath("favicon.svg")),
           ("type", "image/svg+xml"),
-        ]),
+        ]
+      ),
       element("link", [("rel", "preconnect"), ("href", "https://fonts.googleapis.com")]),
       element(
-        "link", [("rel", "preconnect"), ("href", "https://fonts.gstatic.com"), ("crossorigin", "")]),
+        "link",
+        [("rel", "preconnect"), ("href", "https://fonts.gstatic.com"), ("crossorigin", "")]
+      ),
       element(
         "link",
         [
           ("rel", "stylesheet"),
           ("href", "https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap"),
-        ]),
+        ]
+      ),
       element(
-        "link", [("rel", "stylesheet"), ("href", configuration.assetPath("styles/site.css"))]),
+        "link",
+        [("rel", "stylesheet"), ("href", configuration.assetPath("styles/site.css"))]
+      ),
       element("meta", [("property", "og:site_name"), ("content", configuration.siteName)]),
       element("meta", [("property", "og:locale"), ("content", "ko_KR")]),
       element("meta", [("property", "og:type"), ("content", metadata.type)]),
@@ -87,17 +94,22 @@ public struct PageLayout: Sendable {
       element("meta", [("property", "og:url"), ("content", canonical)]),
       element(
         "meta",
-        [("name", "twitter:card"), ("content", image == nil ? "summary" : "summary_large_image")]),
+        [("name", "twitter:card"), ("content", image == nil ? "summary" : "summary_large_image")]
+      ),
       element("meta", [("name", "twitter:title"), ("content", metadata.title)]),
       element("meta", [("name", "twitter:description"), ("content", metadata.description)]),
       element(
-        "script", [],
+        "script",
+        [],
         .raw(
           "try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}"
-        )),
+        )
+      ),
       element(
-        "script", [("type", "application/ld+json")],
-        .raw(structuredData(metadata: metadata, canonical: canonical))),
+        "script",
+        [("type", "application/ld+json")],
+        .raw(structuredData(metadata: metadata, canonical: canonical))
+      ),
     ]
 
     if let image {
@@ -111,12 +123,15 @@ public struct PageLayout: Sendable {
       head.append(
         element(
           "meta",
-          [("property", "article:published_time"), ("content", BlogDate.machine(publishedAt))]))
+          [("property", "article:published_time"), ("content", BlogDate.machine(publishedAt))]
+        )
+      )
     }
     head.append(
       contentsOf: metadata.tags.map {
         element("meta", [("property", "article:tag"), ("content", $0)])
-      })
+      }
+    )
 
     let document = Node.document(
       element(
@@ -184,8 +199,10 @@ public struct PageLayout: Sendable {
         "div",
         [("class", "container header-inner")],
         element(
-          "a", [("class", "brand"), ("href", router.path(for: .home))],
-          .text(configuration.siteName)),
+          "a",
+          [("class", "brand"), ("href", router.path(for: .home))],
+          .text(configuration.siteName)
+        ),
         element(
           "nav",
           [("aria-label", "주요 메뉴")],
@@ -218,7 +235,10 @@ public struct PageLayout: Sendable {
           [("class", "footer-links")],
           element("a", [("href", router.path(for: .feed))], .text("RSS")),
           element(
-            "a", [("href", "https://github.com/\(configuration.repository)")], .text("GitHub"))
+            "a",
+            [("href", "https://github.com/\(configuration.repository)")],
+            .text("GitHub")
+          )
         )
       )
     )

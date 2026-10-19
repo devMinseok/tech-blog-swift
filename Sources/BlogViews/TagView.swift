@@ -10,15 +10,24 @@ public struct TagView: Sendable {
       "div",
       [("class", "container page")],
       element(
-        "header", [("class", "page-header")], element("p", [("class", "eyebrow")], .text("TAG")),
-        element("h1", [], .text(tag)), element("p", [], .text("\(posts.count)개의 글"))),
+        "header",
+        [("class", "page-header")],
+        element("p", [("class", "eyebrow")], .text("TAG")),
+        element("h1", [], .text(tag)),
+        element("p", [], .text("\(posts.count)개의 글"))
+      ),
       element(
-        "div", [("class", "post-list")], fragment(posts.map { postCard($0, router: layout.router) })
+        "div",
+        [("class", "post-list")],
+        fragment(posts.map { postCard($0, router: layout.router) })
       )
     )
     return layout.render(
       metadata: PageMetadata(
-        title: "#\(tag)", description: "\(tag) 주제로 작성한 기술 글입니다.", route: .tag(tag)),
+        title: "#\(tag)",
+        description: "\(tag) 주제로 작성한 기술 글입니다.",
+        route: .tag(tag)
+      ),
       body: body
     )
   }

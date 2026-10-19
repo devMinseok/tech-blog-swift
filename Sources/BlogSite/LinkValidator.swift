@@ -80,7 +80,9 @@ struct LinkValidator {
 
   private func relativeDescription(_ file: URL, root: URL) -> String {
     file.standardizedFileURL.path.replacingOccurrences(
-      of: root.standardizedFileURL.path + "/", with: "")
+      of: root.standardizedFileURL.path + "/",
+      with: ""
+    )
   }
 
   private func referenceBeforeQuery(_ reference: String) -> String {

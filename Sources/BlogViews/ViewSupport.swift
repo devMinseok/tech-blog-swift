@@ -50,8 +50,10 @@ func postCard(_ post: BlogPost, router: BlogRouter) -> Node {
       "div",
       [("class", "post-card__meta")],
       element(
-        "time", [("datetime", BlogDate.machine(post.publishedAt))],
-        .text(BlogDate.display(post.publishedAt))),
+        "time",
+        [("datetime", BlogDate.machine(post.publishedAt))],
+        .text(BlogDate.display(post.publishedAt))
+      ),
       .text("· \(post.estimatedReadingMinutes)분 읽기"),
       fragment(post.tags.prefix(2).map { tagLink($0, router: router) })
     )
@@ -68,7 +70,8 @@ func postCard(_ post: BlogPost, router: BlogRouter) -> Node {
       [
         ("class", "post-card__thumb"), ("src", router.configuration.assetPath(coverImage)),
         ("alt", ""), ("loading", "lazy"),
-      ])
+      ]
+    )
   )
 }
 
@@ -93,8 +96,10 @@ func seriesCard(title: String, summary: String, meta: String, href: String) -> N
     [("class", "post-card series-card")],
     element("div", [("class", "post-card__meta")], .text(meta)),
     element(
-      "h2", [("class", "post-card__title")],
-      element("a", [("href", href)], .text(title))),
+      "h2",
+      [("class", "post-card__title")],
+      element("a", [("href", href)], .text(title))
+    ),
     element("p", [("class", "post-card__summary")], .text(summary))
   )
 }

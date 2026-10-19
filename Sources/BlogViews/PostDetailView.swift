@@ -6,7 +6,9 @@ public struct PostDetailView: Sendable {
   public init() {}
 
   public func render(
-    post: BlogPost, layout: PageLayout, series: PostSeriesContext? = nil
+    post: BlogPost,
+    layout: PageLayout,
+    series: PostSeriesContext? = nil
   ) -> String {
     let markdown = MarkdownRenderer(basePath: layout.configuration.basePath).render(post.content)
     let body = element(
@@ -34,15 +36,19 @@ public struct PostDetailView: Sendable {
       post.tags.isEmpty
         ? fragment([])
         : element(
-          "div", [("class", "tag-cloud post-tags")],
-          fragment(post.tags.map { tagLink($0, router: layout.router) })),
+          "div",
+          [("class", "tag-cloud post-tags")],
+          fragment(post.tags.map { tagLink($0, router: layout.router) })
+        ),
       series.map { partNavigation($0, router: layout.router) } ?? fragment([]),
       element(
         "footer",
         [("class", "post-footer")],
         element(
-          "a", [("href", layout.configuration.sourceURL(for: post.sourceFile))],
-          .text("이 글 수정 제안하기 ↗"))
+          "a",
+          [("href", layout.configuration.sourceURL(for: post.sourceFile))],
+          .text("이 글 수정 제안하기 ↗")
+        )
       ),
       comments(post: post, configuration: layout.configuration)
     )
@@ -62,17 +68,24 @@ public struct PostDetailView: Sendable {
 
   private func byline(post: BlogPost, author: String) -> Node {
     element(
-      "div", [("class", "byline")],
+      "div",
+      [("class", "byline")],
       element("span", [("class", "byline__avatar"), ("aria-hidden", "true")], .text(String(author.prefix(1)))),
       element(
-        "div", [("class", "byline__text")],
+        "div",
+        [("class", "byline__text")],
         element("span", [("class", "byline__name")], .text(author)),
         element(
-          "span", [("class", "post-meta")],
+          "span",
+          [("class", "post-meta")],
           .text("\(post.estimatedReadingMinutes)분 읽기 · "),
           element(
-            "time", [("datetime", BlogDate.machine(post.publishedAt))],
-            .text(BlogDate.display(post.publishedAt)))))
+            "time",
+            [("datetime", BlogDate.machine(post.publishedAt))],
+            .text(BlogDate.display(post.publishedAt))
+          )
+        )
+      )
     )
   }
 
@@ -85,7 +98,8 @@ public struct PostDetailView: Sendable {
       element(
         "a",
         [("href", router.path(for: .topic(series: context.series.slug, topic: context.topic.slug)))],
-        .text(context.topic.title)),
+        .text(context.topic.title)
+      ),
       .text(" · \(context.part)편")
     )
   }
@@ -121,8 +135,10 @@ public struct PostDetailView: Sendable {
         element("h2", [("id", "comments-title")], .text("댓글과 반응")),
         element("p", [], .text("GitHub Discussions의 giscus 설정을 마치면 이 위치에 댓글과 반응이 표시됩니다.")),
         element(
-          "a", [("href", "https://github.com/\(configuration.repository)/discussions")],
-          .text("Discussions 열기 ↗"))
+          "a",
+          [("href", "https://github.com/\(configuration.repository)/discussions")],
+          .text("Discussions 열기 ↗")
+        )
       )
     }
 

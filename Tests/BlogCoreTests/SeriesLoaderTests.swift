@@ -7,7 +7,9 @@ final class SeriesLoaderTests: XCTestCase {
 
   override func setUpWithError() throws {
     root = FileManager.default.temporaryDirectory.appendingPathComponent(
-      UUID().uuidString, isDirectory: true)
+      UUID().uuidString,
+      isDirectory: true
+    )
     try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
   }
 
@@ -55,11 +57,13 @@ final class SeriesLoaderTests: XCTestCase {
   func testRejectsSlugMismatch() throws {
     try write(
       seriesSource.replacingOccurrences(of: "slug: teardown", with: "slug: other"),
-      to: "teardown/_series.md")
+      to: "teardown/_series.md"
+    )
     XCTAssertThrowsError(try SeriesLoader().loadSeries(from: root)) { error in
       XCTAssertEqual(
         error as? ContentError,
-        .seriesSlugMismatch(file: "teardown/_series.md", slug: "other", directory: "teardown"))
+        .seriesSlugMismatch(file: "teardown/_series.md", slug: "other", directory: "teardown")
+      )
     }
   }
 
@@ -77,7 +81,9 @@ final class SeriesLoaderTests: XCTestCase {
     try write(topicSource(status: "done"), to: "teardown/spm.md")
     XCTAssertThrowsError(try SeriesLoader().loadSeries(from: root)) { error in
       XCTAssertEqual(
-        error as? ContentError, .invalidTopicStatus(file: "teardown/spm.md", value: "done"))
+        error as? ContentError,
+        .invalidTopicStatus(file: "teardown/spm.md", value: "done")
+      )
     }
   }
 
@@ -85,17 +91,22 @@ final class SeriesLoaderTests: XCTestCase {
     try write(seriesSource, to: "teardown/_series.md")
     try write(
       topicSource(status: nil).replacingOccurrences(of: "summary: Package.swift부터\n", with: ""),
-      to: "teardown/spm.md")
+      to: "teardown/spm.md"
+    )
     XCTAssertThrowsError(try SeriesLoader().loadSeries(from: root)) { error in
       XCTAssertEqual(
-        error as? ContentError, .missingField(file: "teardown/spm.md", field: "summary"))
+        error as? ContentError,
+        .missingField(file: "teardown/spm.md", field: "summary")
+      )
     }
   }
 
   private func write(_ source: String, to relativePath: String) throws {
     let url = root.appendingPathComponent(relativePath)
     try FileManager.default.createDirectory(
-      at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+      at: url.deletingLastPathComponent(),
+      withIntermediateDirectories: true
+    )
     try source.write(to: url, atomically: true, encoding: .utf8)
   }
 

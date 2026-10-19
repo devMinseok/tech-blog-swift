@@ -47,9 +47,17 @@ final class SeriesCatalogTests: XCTestCase {
 
   func testContextIsNilForStandalonePost() throws {
     let standalone = BlogPost(
-      id: "solo", title: "Solo", slug: "solo",
-      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-01")), summary: "s", tags: [],
-      isDraft: false, coverImage: nil, content: "c", sourceFile: "solo.md")
+      id: "solo",
+      title: "Solo",
+      slug: "solo",
+      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-01")),
+      summary: "s",
+      tags: [],
+      isDraft: false,
+      coverImage: nil,
+      content: "c",
+      sourceFile: "solo.md"
+    )
     let catalog = SeriesCatalog(series: [series(topics: ["spm"])], posts: [standalone])
     XCTAssertNil(catalog.context(for: standalone))
     XCTAssertEqual(catalog.entries, [])
@@ -57,22 +65,42 @@ final class SeriesCatalogTests: XCTestCase {
 
   private func series(slug: String = "teardown", topics: [String]) -> Series {
     Series(
-      slug: slug, title: slug, summary: "요약", introduction: "소개",
+      slug: slug,
+      title: slug,
+      summary: "요약",
+      introduction: "소개",
       topics: topics.map {
         Topic(
-          slug: $0, title: $0, summary: "요약", status: .ongoing, introduction: "소개",
-          sourceFile: "\(slug)/\($0).md")
+          slug: $0,
+          title: $0,
+          summary: "요약",
+          status: .ongoing,
+          introduction: "소개",
+          sourceFile: "\(slug)/\($0).md"
+        )
       },
-      sourceFile: "\(slug)/_series.md")
+      sourceFile: "\(slug)/_series.md"
+    )
   }
 
   private func post(
-    series: String = "teardown", topic: String = "spm", part: Int, date: String = "2026-09-01"
+    series: String = "teardown",
+    topic: String = "spm",
+    part: Int,
+    date: String = "2026-09-01"
   ) throws -> BlogPost {
     BlogPost(
-      id: "\(topic)-\(part)", title: "\(topic) \(part)", slug: "\(topic)-\(part)",
-      publishedAt: try XCTUnwrap(BlogDate.parse(date)), summary: "s", tags: [],
-      isDraft: false, coverImage: nil, content: "c", sourceFile: "\(topic)-\(part).md",
-      membership: SeriesMembership(series: series, topic: topic, part: part))
+      id: "\(topic)-\(part)",
+      title: "\(topic) \(part)",
+      slug: "\(topic)-\(part)",
+      publishedAt: try XCTUnwrap(BlogDate.parse(date)),
+      summary: "s",
+      tags: [],
+      isDraft: false,
+      coverImage: nil,
+      content: "c",
+      sourceFile: "\(topic)-\(part).md",
+      membership: SeriesMembership(series: series, topic: topic, part: part)
+    )
   }
 }

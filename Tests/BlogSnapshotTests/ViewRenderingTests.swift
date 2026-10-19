@@ -7,15 +7,26 @@ import XCTest
 final class ViewRenderingTests: XCTestCase {
   func testPostRendersMetadataSafeMarkdownAndGiscusKey() throws {
     let giscus = GiscusConfiguration(
-      repository: "owner/repo", repositoryID: "R_123", category: "Comments", categoryID: "DIC_123")
+      repository: "owner/repo",
+      repositoryID: "R_123",
+      category: "Comments",
+      categoryID: "DIC_123"
+    )
     let configuration = SiteConfiguration(
-      baseURL: "https://owner.github.io", basePath: "/repo", repository: "owner/repo",
-      giscus: giscus)
+      baseURL: "https://owner.github.io",
+      basePath: "/repo",
+      repository: "owner/repo",
+      giscus: giscus
+    )
     let post = BlogPost(
-      id: "stable-post-id", title: "Swift <script>", slug: "swift-script",
-      publishedAt: try XCTUnwrap(BlogDate.parse("2026-01-01")), summary: "Safe & useful",
+      id: "stable-post-id",
+      title: "Swift <script>",
+      slug: "swift-script",
+      publishedAt: try XCTUnwrap(BlogDate.parse("2026-01-01")),
+      summary: "Safe & useful",
       tags: ["Swift"],
-      isDraft: false, coverImage: nil,
+      isDraft: false,
+      coverImage: nil,
       content: "# Title\n\n`<value>` [Posts](/posts/)\n\n```swift\nlet value = \"<safe>\"\n```",
       sourceFile: "post.md"
     )
@@ -25,15 +36,22 @@ final class ViewRenderingTests: XCTestCase {
     XCTAssertTrue(html.contains("&lt;value&gt;"))
     XCTAssertTrue(html.contains("data-term=\"stable-post-id\""))
     XCTAssertTrue(
-      html.contains("rel=\"canonical\" href=\"https://owner.github.io/repo/posts/swift-script/\""))
+      html.contains("rel=\"canonical\" href=\"https://owner.github.io/repo/posts/swift-script/\"")
+    )
   }
 
   func testMissingGiscusShowsSetupMessage() throws {
     let configuration = SiteConfiguration(baseURL: "https://example.com")
     let post = BlogPost(
-      id: "id", title: "Title", slug: "title",
+      id: "id",
+      title: "Title",
+      slug: "title",
       publishedAt: try XCTUnwrap(BlogDate.parse("2026-01-01")),
-      summary: "Summary", tags: [], isDraft: false, coverImage: nil, content: "Body",
+      summary: "Summary",
+      tags: [],
+      isDraft: false,
+      coverImage: nil,
+      content: "Body",
       sourceFile: "post.md"
     )
     let html = PostDetailView().render(post: post, layout: PageLayout(configuration: configuration))
