@@ -7,8 +7,12 @@ import XCTest
 final class MediumLayoutTests: XCTestCase {
   private let layout = PageLayout(
     configuration: SiteConfiguration(
-      baseURL: "https://owner.github.io", basePath: "/repo", authorName: "Minseok",
-      repository: "owner/repo"))
+      baseURL: "https://owner.github.io",
+      basePath: "/repo",
+      authorName: "Minseok",
+      repository: "owner/repo"
+    )
+  )
 
   func testPostHeaderShowsBylineAfterTitle() throws {
     let html = PostDetailView().render(post: try post(coverImage: nil), layout: layout)
@@ -46,11 +50,28 @@ final class MediumLayoutTests: XCTestCase {
     XCTAssertLessThan(font.lowerBound, site.lowerBound)
   }
 
+  func testHomeHeroIsShortAndShowsMotif() throws {
+    let html = HomeView().render(posts: [try post(coverImage: nil)], layout: layout)
+    XCTAssertTrue(html.contains("AI 딸깍으로 개발이 너무 편해져버린 나머지 원초적인 걸 파보기로 했습니다."))
+    XCTAssertFalse(html.contains("SWIFT · ARCHITECTURE · NOTES"))
+    XCTAssertFalse(html.contains("button-link"))
+    let hero = try XCTUnwrap(html.range(of: "class=\"hero container\""))
+    let recent = try XCTUnwrap(html.range(of: "최근 글"))
+    XCTAssertLessThan(hero.lowerBound, recent.lowerBound)
+  }
+
   private func post(coverImage: String?) throws -> BlogPost {
     BlogPost(
-      id: "post", title: "Hello", slug: "hello",
-      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-01")), summary: "Summary",
-      tags: ["Swift"], isDraft: false, coverImage: coverImage, content: "Body",
-      sourceFile: "post.md")
+      id: "post",
+      title: "Hello",
+      slug: "hello",
+      publishedAt: try XCTUnwrap(BlogDate.parse("2026-09-01")),
+      summary: "Summary",
+      tags: ["Swift"],
+      isDraft: false,
+      coverImage: coverImage,
+      content: "Body",
+      sourceFile: "post.md"
+    )
   }
 }

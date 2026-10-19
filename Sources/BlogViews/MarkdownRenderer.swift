@@ -205,7 +205,8 @@ private struct SafeHTMLWalker: MarkupWalker {
       return "-"
     }
     let value = String(scalars).split(separator: "-", omittingEmptySubsequences: true).joined(
-      separator: "-")
+      separator: "-"
+    )
     return value.isEmpty ? "section" : value
   }
 

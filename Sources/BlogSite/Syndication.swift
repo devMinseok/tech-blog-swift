@@ -37,7 +37,10 @@ enum AtomFeed {
 
 enum Sitemap {
   static func render(
-    posts: [BlogPost], tags: [String], catalog: SeriesCatalog, configuration: SiteConfiguration
+    posts: [BlogPost],
+    tags: [String],
+    catalog: SeriesCatalog,
+    configuration: SiteConfiguration
   ) -> String {
     var routes: [(SiteRoute, Date?)] = [
       (.home, posts.first?.publishedAt), (.posts, posts.first?.publishedAt), (.about, nil),

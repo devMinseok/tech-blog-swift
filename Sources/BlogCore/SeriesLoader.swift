@@ -36,11 +36,16 @@ public struct SeriesLoader: Sendable {
 
     let definitionFile = "\(directoryName)/\(Self.definitionFileName)"
     let frontMatter = try FrontMatter.parse(
-      String(contentsOf: definition, encoding: .utf8), file: definitionFile)
+      String(contentsOf: definition, encoding: .utf8),
+      file: definitionFile
+    )
     let slug = try validSlug(frontMatter, file: definitionFile)
     guard slug == directoryName else {
       throw ContentError.seriesSlugMismatch(
-        file: definitionFile, slug: slug, directory: directoryName)
+        file: definitionFile,
+        slug: slug,
+        directory: directoryName
+      )
     }
 
     var topics: [Topic] = []
@@ -91,8 +96,7 @@ public struct SeriesLoader: Sendable {
     return slug
   }
 
-  private func required(_ key: String, in frontMatter: FrontMatter, file: String) throws -> String
-  {
+  private func required(_ key: String, in frontMatter: FrontMatter, file: String) throws -> String {
     guard let value = frontMatter[key], !value.isEmpty else {
       throw ContentError.missingField(file: file, field: key)
     }

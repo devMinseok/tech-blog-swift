@@ -132,12 +132,18 @@ public struct ContentLoader: Sendable {
         }
         guard owner.topics.contains(where: { $0.slug == membership.topic }) else {
           throw ContentError.unknownTopic(
-            file: post.sourceFile, series: membership.series, topic: membership.topic)
+            file: post.sourceFile,
+            series: membership.series,
+            topic: membership.topic
+          )
         }
         guard parts.insert("\(membership.series)/\(membership.topic)/\(membership.part)").inserted
         else {
           throw ContentError.duplicatePart(
-            series: membership.series, topic: membership.topic, part: membership.part)
+            series: membership.series,
+            topic: membership.topic,
+            part: membership.part
+          )
         }
       }
 

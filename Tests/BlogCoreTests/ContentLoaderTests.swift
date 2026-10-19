@@ -29,9 +29,15 @@ final class ContentLoaderTests: XCTestCase {
       .replacingOccurrences(of: "slug: hello-swift", with: "slug: draft-post")
       .replacingOccurrences(of: "draft: false", with: "draft: true")
     try validPost.write(
-      to: root.appendingPathComponent("published.md"), atomically: true, encoding: .utf8)
+      to: root.appendingPathComponent("published.md"),
+      atomically: true,
+      encoding: .utf8
+    )
     try future.write(
-      to: root.appendingPathComponent("future.md"), atomically: true, encoding: .utf8)
+      to: root.appendingPathComponent("future.md"),
+      atomically: true,
+      encoding: .utf8
+    )
     try draft.write(to: root.appendingPathComponent("draft.md"), atomically: true, encoding: .utf8)
 
     let now = try XCTUnwrap(BlogDate.parse("2026-09-01"))
@@ -45,11 +51,19 @@ final class ContentLoaderTests: XCTestCase {
     let root = try temporaryDirectory()
     defer { try? FileManager.default.removeItem(at: root) }
     try validPost.write(
-      to: root.appendingPathComponent("one.md"), atomically: true, encoding: .utf8)
+      to: root.appendingPathComponent("one.md"),
+      atomically: true,
+      encoding: .utf8
+    )
     let duplicate = validPost.replacingOccurrences(
-      of: "slug: hello-swift", with: "slug: another-post")
+      of: "slug: hello-swift",
+      with: "slug: another-post"
+    )
     try duplicate.write(
-      to: root.appendingPathComponent("two.md"), atomically: true, encoding: .utf8)
+      to: root.appendingPathComponent("two.md"),
+      atomically: true,
+      encoding: .utf8
+    )
     XCTAssertThrowsError(try ContentLoader().loadPosts(from: root, includeDrafts: true)) { error in
       XCTAssertEqual(error as? ContentError, .duplicateIdentifier("post-001"))
     }
@@ -57,7 +71,9 @@ final class ContentLoaderTests: XCTestCase {
 
   func testRejectsPathLikeTags() {
     let source = validPost.replacingOccurrences(
-      of: "tags: Swift, Testing, swift", with: "tags: Swift, ../secret")
+      of: "tags: Swift, Testing, swift",
+      with: "tags: Swift, ../secret"
+    )
     XCTAssertThrowsError(try ContentLoader().parsePost(source)) { error in
       XCTAssertEqual(error as? ContentError, .invalidTag(file: "post.md", value: "../secret"))
     }
@@ -90,7 +106,9 @@ final class ContentLoaderTests: XCTestCase {
 
   func testRejectsIncompleteMembership() {
     let source = validPost.replacingOccurrences(
-      of: "draft: false", with: "draft: false\nseries: teardown")
+      of: "draft: false",
+      with: "draft: false\nseries: teardown"
+    )
     XCTAssertThrowsError(try ContentLoader().parsePost(source)) { error in
       XCTAssertEqual(error as? ContentError, .incompleteSeriesMembership(file: "post.md"))
     }
@@ -118,7 +136,8 @@ final class ContentLoaderTests: XCTestCase {
     XCTAssertThrowsError(try ContentLoader().loadPosts(from: root, series: [teardown])) { error in
       XCTAssertEqual(
         error as? ContentError,
-        .unknownTopic(file: "published.md", series: "teardown", topic: "swiftpm"))
+        .unknownTopic(file: "published.md", series: "teardown", topic: "swiftpm")
+      )
     }
   }
 
@@ -126,7 +145,10 @@ final class ContentLoaderTests: XCTestCase {
     let root = try temporaryDirectory()
     defer { try? FileManager.default.removeItem(at: root) }
     try member(part: "1").write(
-      to: root.appendingPathComponent("one.md"), atomically: true, encoding: .utf8)
+      to: root.appendingPathComponent("one.md"),
+      atomically: true,
+      encoding: .utf8
+    )
     let draft = member(part: "1")
       .replacingOccurrences(of: "id: post-001", with: "id: post-002")
       .replacingOccurrences(of: "slug: hello-swift", with: "slug: draft-post")
@@ -134,32 +156,50 @@ final class ContentLoaderTests: XCTestCase {
     try draft.write(to: root.appendingPathComponent("two.md"), atomically: true, encoding: .utf8)
     XCTAssertThrowsError(try ContentLoader().loadPosts(from: root, series: [teardown])) { error in
       XCTAssertEqual(
-        error as? ContentError, .duplicatePart(series: "teardown", topic: "spm", part: 1))
+        error as? ContentError,
+        .duplicatePart(series: "teardown", topic: "spm", part: 1)
+      )
     }
   }
 
   private var teardown: Series {
     Series(
-      slug: "teardown", title: "뜯어보기", summary: "요약", introduction: "소개",
+      slug: "teardown",
+      title: "뜯어보기",
+      summary: "요약",
+      introduction: "소개",
       topics: [
         Topic(
-          slug: "spm", title: "SPM", summary: "요약", status: .ongoing, introduction: "소개",
-          sourceFile: "teardown/spm.md")
+          slug: "spm",
+          title: "SPM",
+          summary: "요약",
+          status: .ongoing,
+          introduction: "소개",
+          sourceFile: "teardown/spm.md"
+        )
       ],
-      sourceFile: "teardown/_series.md")
+      sourceFile: "teardown/_series.md"
+    )
   }
 
-  private func member(series: String = "teardown", topic: String = "spm", part: String = "1")
+  private func member(
+    series: String = "teardown",
+    topic: String = "spm",
+    part: String = "1"
+  )
     -> String
   {
     validPost.replacingOccurrences(
       of: "draft: false",
-      with: "draft: false\nseries: \(series)\ntopic: \(topic)\npart: \(part)")
+      with: "draft: false\nseries: \(series)\ntopic: \(topic)\npart: \(part)"
+    )
   }
 
   private func temporaryDirectory() throws -> URL {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
-      UUID().uuidString, isDirectory: true)
+      UUID().uuidString,
+      isDirectory: true
+    )
     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     return url
   }

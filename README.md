@@ -1,131 +1,31 @@
-# tech-blog-swift
+# Minseok.dev
 
-Swift로 작성한 정적 기술 블로그입니다. Markdown 글을 빌드 시점에 HTML로 변환하고 GitHub Actions가 결과물을 GitHub Pages에 배포합니다. 별도 애플리케이션 서버나 데이터베이스는 사용하지 않습니다.
+> AI 딸깍으로 개발이 너무 편해져버린 나머지 원초적인 걸 파보기로 했습니다.
 
-## 요구 환경
+Swift와 iOS 개발을 하며 배운 것을 기록하는 기술 블로그입니다.
 
-- Swift 6.3.3 (`.swift-version`에 고정)
-- macOS 또는 Swift가 설치된 Linux
-- 로컬 미리보기를 위한 Python 3(선택)
+**👉 https://devminseok.github.io/tech-blog-swift/**
 
-## 빌드와 확인
+## 무엇을 쓰나요
+
+- **뜯어보기**: AI가 한 줄로 답해주는 것들의 밑바닥을 직접 파봅니다. 예를 들면 SPM이 패키지를 어떻게 빌드하는지, iOS에서 dynamic library가 정말 막혀 있는지 같은 것들입니다. 주제마다 여러 편으로 나뉘지만, 관심 있는 편만 골라 읽어도 되도록 씁니다.
+- **단독 글**: Swift 동시성, 아키텍처, 그때그때 배운 것들.
+
+## 이 블로그는 어떻게 만들어졌나요
+
+블로그 자체도 "직접 만들어 보기"의 결과물입니다.
+
+- **생성기**: Swift로 직접 만든 정적 사이트 생성기입니다. Markdown 글을 빌드할 때 HTML로 바꿉니다. 사용한 패키지는 [swift-markdown](https://github.com/swiftlang/swift-markdown), [swift-html](https://github.com/pointfreeco/swift-html), [swift-url-routing](https://github.com/pointfreeco/swift-url-routing)입니다.
+- **배포**: GitHub Actions가 테스트하고 GitHub Pages로 배포합니다. 서버나 데이터베이스는 없습니다.
+- **댓글과 반응**: GitHub Discussions 기반의 [giscus](https://giscus.app/ko)를 씁니다.
+
+로컬에서 띄워 보려면 Swift 6.3.3이 필요합니다.
 
 ```bash
-swift test
 swift run BlogBuilder --base-url http://127.0.0.1:8000 --base-path ""
 python3 -m http.server 8000 --directory .build/site
 ```
 
-브라우저에서 `http://127.0.0.1:8000`을 엽니다. 운영용 기본 빌드는 GitHub Pages 프로젝트 주소인 `https://devminseok.github.io/tech-blog-swift/`에 맞춰 링크를 생성합니다.
+## 라이선스
 
-```bash
-swift run BlogBuilder
-```
-
-## 글 작성
-
-`Content/Posts`에 Markdown 파일을 추가합니다.
-
-```markdown
----
-id: post-stable-identifier
-title: 글 제목
-slug: lowercase-slug
-date: 2026-09-04
-summary: 목록과 검색 결과에 표시할 한 줄 설명
-tags: Swift, Testing
-draft: false
-coverImage: /images/posts/example.png
----
-
-본문을 Markdown으로 작성합니다.
-```
-
-- `id`는 giscus Discussion을 연결하는 영구 키이므로 발행 후 바꾸지 않습니다.
-- `slug`는 소문자 영문, 숫자와 하이픈만 사용합니다.
-- `draft: true`와 미래 날짜 글은 운영 빌드에서 제외됩니다.
-- 대표 이미지를 쓸 때는 `Public` 아래의 실제 파일 경로를 지정합니다.
-- 초안을 포함한 로컬 빌드는 `swift run BlogBuilder --include-drafts`를 사용합니다.
-
-## 시리즈
-
-시리즈는 **시리즈 → 주제 → 편** 3단계입니다. 시리즈마다 `Content/Series/<시리즈 slug>/` 디렉터리를 두고, 그 안에 시리즈 정의 `_series.md`와 주제 파일을 둡니다.
-
-```markdown
-<!-- Content/Series/teardown/_series.md -->
----
-slug: teardown
-title: 뜯어보기
-summary: 시리즈 한 줄 설명
----
-
-시리즈 소개 (Markdown)
-```
-
-```markdown
-<!-- Content/Series/teardown/spm.md -->
----
-slug: spm
-title: SPM 뜯어보기
-summary: 주제 한 줄 설명
-status: ongoing
----
-
-주제 소개 (Markdown)
-```
-
-글을 주제에 넣을 때는 front matter에 세 줄을 추가합니다.
-
-```markdown
-series: teardown
-topic: spm
-part: 1
-```
-
-- 시리즈 `slug`는 디렉터리 이름과 같아야 합니다. 주제 `slug`는 같은 시리즈 안에서만 유일하면 됩니다.
-- `status`는 `ongoing`(연재 중) 또는 `completed`(완결)이며 생략하면 `ongoing`입니다.
-- 편 순서는 날짜가 아니라 `part` 번호로 정합니다. 같은 주제에서 `part`가 겹치면 빌드가 실패합니다.
-- 없는 시리즈나 주제를 가리키면 빌드가 실패합니다.
-- 공개된 편이 없는 주제와, 공개된 주제가 없는 시리즈는 사이트에 표시되지 않습니다.
-
-## giscus 댓글과 반응
-
-댓글과 좋아요 역할의 reaction은 GitHub Discussions 기반 giscus가 담당합니다.
-
-1. 저장소 Settings에서 Discussions를 활성화합니다.
-2. [giscus GitHub App](https://github.com/apps/giscus)을 이 저장소에 설치합니다.
-3. [giscus.app](https://giscus.app/ko)에서 `devMinseok/tech-blog-swift`와 댓글용 카테고리를 선택합니다.
-4. 표시된 repository ID와 category ID를 GitHub Actions repository secret으로 등록합니다.
-   - `GISCUS_REPO_ID`
-   - `GISCUS_CATEGORY_ID`
-5. 기본값은 giscus 권장 방식에 맞춘 `Announcements` 카테고리입니다. 다른 카테고리를 쓸 때만 워크플로의 `GISCUS_CATEGORY`를 바꿉니다.
-
-로컬에서도 같은 환경 변수를 지정하면 giscus 스크립트를 포함해 생성합니다. 값이 없을 때는 빌드를 실패시키지 않고 Discussions 안내 링크를 보여줍니다. 글 제목이나 URL이 바뀌어도 댓글 연결이 유지되도록 `data-mapping="specific"`과 글의 `id`를 사용합니다.
-
-## GitHub Pages 배포
-
-`.github/workflows/pages.yml`은 Pull Request에서 테스트와 생성 검증만 수행하고, `main` 브랜치 push에서는 Pages artifact를 배포합니다.
-
-저장소에서 한 번 설정해야 합니다.
-
-1. Settings → Pages → Build and deployment의 Source를 **GitHub Actions**로 선택합니다.
-2. 위 giscus secret을 등록합니다.
-3. `main`에 push한 뒤 Actions와 Pages 주소를 확인합니다.
-
-생성 결과인 `.build/site`는 commit하지 않습니다. 문제가 생기면 정상 동작했던 commit을 revert하여 다시 배포합니다.
-
-## 구조
-
-```text
-Content/Posts       Markdown 원문
-Content/Series      시리즈와 주제 정의
-Public              CSS, JavaScript, 이미지
-Sources/BlogCore    콘텐츠 모델과 검증
-Sources/BlogRouter  URL 및 출력 경로
-Sources/BlogViews   HTML과 Markdown 렌더링
-Sources/BlogSite    정적 생성, 피드, sitemap, 링크 검증
-Sources/BlogBuilder CLI
-Tests               핵심 기능과 생성 결과 검증
-```
-
-상세 설계와 단계별 운영 기준은 [BUILD_PLAN.md](BUILD_PLAN.md)를 참고하세요.
+[LICENSE](LICENSE)를 참고하세요.

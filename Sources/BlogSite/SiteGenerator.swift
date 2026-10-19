@@ -56,7 +56,8 @@ public struct SiteGenerator: Sendable {
     }
 
     let series = try SeriesLoader().loadSeries(
-      from: root.appendingPathComponent("Content/Series", isDirectory: true))
+      from: root.appendingPathComponent("Content/Series", isDirectory: true)
+    )
     let posts = try ContentLoader().loadPosts(
       from: contentDirectory,
       publicDirectory: publicDirectory,
@@ -88,7 +89,8 @@ public struct SiteGenerator: Sendable {
             .post(slug: post.slug),
             PostDetailView().render(post: post, layout: layout, series: catalog.context(for: post))
           )
-        })
+        }
+      )
       for entry in catalog.entries {
         pages.append((.series(entry.series.slug), SeriesView().render(entry: entry, layout: layout)))
         pages.append(
@@ -97,7 +99,8 @@ public struct SiteGenerator: Sendable {
               .topic(series: entry.series.slug, topic: topic.topic.slug),
               TopicView().render(series: entry, topic: topic, layout: layout)
             )
-          })
+          }
+        )
       }
       pages.append(
         contentsOf: tags.map { tag in
@@ -105,21 +108,30 @@ public struct SiteGenerator: Sendable {
             post.tags.contains { $0.caseInsensitiveCompare(tag) == .orderedSame }
           }
           return (.tag(tag), TagView().render(tag: tag, posts: taggedPosts, layout: layout))
-        })
+        }
+      )
 
       for (route, html) in pages {
         try write(html, route: route, relativePath: route.outputPath, to: staging)
       }
       try write(
-        AtomFeed.render(posts: posts, configuration: configuration), route: .feed,
-        relativePath: SiteRoute.feed.outputPath, to: staging)
+        AtomFeed.render(posts: posts, configuration: configuration),
+        route: .feed,
+        relativePath: SiteRoute.feed.outputPath,
+        to: staging
+      )
       try write(
         Sitemap.render(posts: posts, tags: tags, catalog: catalog, configuration: configuration),
         route: .sitemap,
-        relativePath: SiteRoute.sitemap.outputPath, to: staging)
+        relativePath: SiteRoute.sitemap.outputPath,
+        to: staging
+      )
       try write(
-        Robots.render(configuration: configuration), route: .robots,
-        relativePath: SiteRoute.robots.outputPath, to: staging)
+        Robots.render(configuration: configuration),
+        route: .robots,
+        relativePath: SiteRoute.robots.outputPath,
+        to: staging
+      )
 
       let broken = try LinkValidator(configuration: configuration).brokenLinks(in: staging)
       guard broken.isEmpty else { throw SiteGenerationError.brokenInternalLinks(broken) }
@@ -153,18 +165,23 @@ public struct SiteGenerator: Sendable {
 
   private func copyPublicDirectory(_ source: URL, to destination: URL) throws {
     for item in try FileManager.default.contentsOfDirectory(
-      at: source, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-    {
+      at: source,
+      includingPropertiesForKeys: nil,
+      options: [.skipsHiddenFiles]
+    ) {
       try FileManager.default.copyItem(
-        at: item, to: destination.appendingPathComponent(item.lastPathComponent))
+        at: item,
+        to: destination.appendingPathComponent(item.lastPathComponent)
+      )
     }
   }
 
-  private func write(_ value: String, route: SiteRoute?, relativePath: String, to root: URL) throws
-  {
+  private func write(_ value: String, route: SiteRoute?, relativePath: String, to root: URL) throws {
     let destination = root.appendingPathComponent(relativePath)
     try FileManager.default.createDirectory(
-      at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+      at: destination.deletingLastPathComponent(),
+      withIntermediateDirectories: true
+    )
     try value.write(to: destination, atomically: true, encoding: .utf8)
   }
 }
