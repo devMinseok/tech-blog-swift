@@ -70,3 +70,6 @@ CLAUDE.local.md
 .claude/
 docs/superpowers/
 .superpowers/
+
+# macOS
+.DS_Store
