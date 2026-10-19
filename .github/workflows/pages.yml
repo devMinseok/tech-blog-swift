@@ -21,6 +21,8 @@ jobs:
     container: swift:6.3.3-noble
     steps:
       - uses: actions/checkout@v4
+      - name: Lint formatting
+        run: swift format lint --strict --recursive --parallel Package.swift Sources Tests
       - name: Test
         run: swift test
       - name: Generate site

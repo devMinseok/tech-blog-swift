@@ -31,9 +31,6 @@ playground.xcworkspace
 
 .build/
 
-# Local reference source; do not publish with this blog repository.
-pointfreeco-main/
-
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
@@ -73,3 +70,6 @@ docs/superpowers/
 
 # macOS
 .DS_Store
+
+
+IdeaForWriting/
