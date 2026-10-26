@@ -5,69 +5,82 @@ public struct AboutView: Sendable {
   public init() {}
 
   public func render(layout: PageLayout) -> String {
+    let repository = layout.configuration.repository
+    let owner = repository.split(separator: "/").first.map(String.init) ?? repository
     let body = element(
       "article",
       [("class", "container page about prose")],
       element("p", [("class", "eyebrow")], .text("ABOUT")),
-      element("h1", [], .text("안녕하세요,")),
-      element("p", [("class", "lead")], .text("Swift와 소프트웨어 설계를 공부하며 알게 된 내용을 제 언어로 정리합니다.")),
-      element("h2", [], .text("앱은 사라질까?")),
+      element("h1", [], .text("나에 대해서")),
+      element(
+        "p",
+        [("class", "lead")],
+        .text("안녕하세요, 강민석이에요. 4년 조금 넘게 iOS 앱을 만들다가, 지금은 다시 대학생으로 돌아와 공부하고 있어요.")
+      ),
+      element("h2", [], .text("아이폰도 맥북도 없던 고1")),
       element(
         "p",
         [],
         .text(
-          "\"주문해줘, 검색해줘, 예약해줘.\" 말 한마디로 원하는 결과를 얻는 시대가 오면 앱은 더 이상 필요 없어지는 걸까? 굉장히 현실적인 질문이다. 나는 앱이 사라지는 게 아니라, 본질 없는 앱이 사라진다고 생각한다."
+          "개발을 처음 시작한 건 고등학교 1학년 때였어요. 그때는 아이폰도 맥북도 없었는데, 애플이 만든 생태계가 그냥 멋져 보였어요. 그 관심 하나로 혼자 공부하면서 아이폰 앱을 만들기 시작했고, 그게 4년 넘게 iOS 개발자로 일하는 데까지 이어졌어요."
+        )
+      ),
+      element("h2", [], .text("결국 사용자를 위해")),
+      element(
+        "p",
+        [],
+        .text(
+          "개발은 결국 그걸 써 줄 사용자를 위해 하는 일이라고 생각해요. 코드를 위해 하는 일이 아니고요. 그렇다고 기능만 돌아가면 코드는 대충 짜도 된다는 뜻은 아니에요. 좋은 경험은 오래 버틸 수 있는 코드 위에서 나오니까, 그 사이에서 적당한 균형을 찾으려고 해요."
         )
       ),
       element(
         "p",
         [],
         .text(
-          "비슷한 변화는 이미 겪어봤다. 웹과 모바일 앱이다. 유튜브는 웹에서도 볼 수 있지만, 휴대폰에서는 대부분 유튜브 앱을 쓴다. 상황에 맞는 경험이 있기 때문이다. PC에서는 웹이 편하고 모바일에서는 앱이 편하다. 기술이 발전해도 그 경험의 차이는 사라지지 않았다."
+          "AI가 많은 걸 대신해 주는 요즘엔 이 생각이 더 커졌어요. 정보를 찾아 정리해 주기만 하는 앱은 AI로 대체될 수 있겠지만, 사용자의 맥락을 이해하고 기기와 생태계를 잘 살린 앱은 오히려 더 빛날 거라고 믿어요. 앱이 사라지는 게 아니라, 본질 없는 앱이 사라지는 거라고요."
         )
       ),
-      element(
-        "p",
-        [],
-        .text(
-          "AI 시대도 비슷하게 흘러갈 것 같다. 정보를 찾아 정리해 주기만 하는 앱은 ChatGPT, Claude, Gemini 같은 AI로 대체될 수 있다. 하지만 사용자 경험을 설계하고, 기기 환경을 활용하고, 생태계에 깊이 통합된 앱은 AI와 충분히 공존할 수 있다. 오히려 AI가 흔해질수록 사용자의 맥락을 이해하고 기기의 특성을 살리는 \"진짜 앱\"만 살아남을 것이다."
-        )
-      ),
-      element(
-        "p",
-        [],
-        .text(
-          "그래서 앞으로 더 중요해지는 건 생태계와 사용자 경험이다. 애플은 하드웨어, 소프트웨어, 플랫폼을 통해 개발자가 사용자 경험에 집중할 수 있는 환경을 만들어 왔다. AI 시대일수록 그 환경을 얼마나 잘 이해하고 활용해서 의미 있는 경험을 설계하느냐가 앱의 차이를 만든다."
-        )
-      ),
-      element(
-        "p",
-        [],
-        .text(
-          "이 블로그에서 AI가 딸깍 한 번에 만들어 주는 것들의 밑바닥을 굳이 파보는 이유도 여기에 있다. 플랫폼이 실제로 어떻게 동작하는지 알아야 그 위에서 대체되기 어려운 경험을 만들 수 있다고 믿는다."
-        )
-      ),
-      element("p", [], element("strong", [], .text("앱은 사라지지 않는다. 더 본질적인 방향으로 가고 있을 뿐이다."))),
-      element("h2", [], .text("이 블로그의 원칙")),
+      element("h2", [], .text("요즘 공부하는 것")),
       element(
         "ul",
         [],
-        element("li", [], .text("직접 확인한 사실과 의견을 구분합니다.")),
-        element("li", [], .text("실패 과정과 선택의 이유도 함께 남깁니다.")),
-        element("li", [], .text("오래 읽을 수 있도록 단순한 구조를 지향합니다."))
+        element(
+          "li",
+          [],
+          element("strong", [], .text("인프라와 서버")),
+          .text(" — iOS 밖의 세계가 궁금해져서, 요즘은 인프라와 서버 쪽을 공부하고 있어요.")
+        ),
+        element(
+          "li",
+          [],
+          element("strong", [], .text("Swift 뜯어보기")),
+          .text(
+            " — AI 덕분에 코드를 한 줄 한 줄 직접 짜는 일은 많이 줄었어요. 그래서 오히려 Swift와 도구들이 실제로 어떻게 동작하는지, 그 원초적인 부분을 이해하고 제대로 쓰고 싶어졌어요. 그 기록을 "
+          ),
+          element("a", [("href", layout.router.path(for: .seriesList))], .text("뜯어보기 시리즈")),
+          .text("에 남기고 있어요.")
+        )
+      ),
+      element("h2", [], .text("달리는 시간")),
+      element(
+        "p",
+        [],
+        .text("취미는 러닝이에요. 뛰는 동안만큼은 이런저런 생각을 덜어내고, 온전히 저한테만 집중할 수 있어서 좋아해요.")
       ),
       element(
         "p",
         [],
-        element(
-          "a",
-          [("href", "https://github.com/\(layout.configuration.repository)")],
-          .text("GitHub에서 소스 보기 ↗")
-        )
+        element("a", [("href", "https://github.com/\(owner)")], .text("GitHub ↗")),
+        .text(" · "),
+        element("a", [("href", "https://github.com/\(repository)")], .text("이 블로그 소스 보기 ↗"))
       )
     )
     return layout.render(
-      metadata: PageMetadata(title: "소개", description: "블로그와 작성자 소개입니다.", route: .about),
+      metadata: PageMetadata(
+        title: "소개",
+        description: "iOS 개발자 강민석을 소개합니다.",
+        route: .about
+      ),
       body: body
     )
   }

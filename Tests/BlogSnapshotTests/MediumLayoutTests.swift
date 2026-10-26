@@ -60,15 +60,17 @@ final class MediumLayoutTests: XCTestCase {
     XCTAssertLessThan(hero.lowerBound, recent.lowerBound)
   }
 
-  func testAboutPageShowsEssayOnApps() throws {
+  func testAboutPageIntroducesAuthor() throws {
     let html = AboutView().render(layout: layout)
-    XCTAssertTrue(html.contains("<h2>앱은 사라질까?</h2>"))
-    XCTAssertTrue(html.contains("본질 없는 앱이 사라진다고 생각한다."))
-    XCTAssertTrue(html.contains("앱은 사라지지 않는다. 더 본질적인 방향으로 가고 있을 뿐이다."))
+    XCTAssertTrue(html.contains("<h1>나에 대해서</h1>"))
+    XCTAssertTrue(html.contains("안녕하세요, 강민석이에요."))
+    XCTAssertTrue(html.contains("<h2>아이폰도 맥북도 없던 고1</h2>"))
+    XCTAssertTrue(html.contains("<h2>결국 사용자를 위해</h2>"))
+    XCTAssertTrue(html.contains("<h2>요즘 공부하는 것</h2>"))
+    XCTAssertTrue(html.contains("<h2>달리는 시간</h2>"))
+    XCTAssertTrue(html.contains("href=\"/repo/series/\""))
+    XCTAssertTrue(html.contains("href=\"https://github.com/owner\""))
     XCTAssertTrue(html.contains("href=\"https://github.com/owner/repo\""))
-    let essay = try XCTUnwrap(html.range(of: "앱은 사라질까?"))
-    let principles = try XCTUnwrap(html.range(of: "이 블로그의 원칙"))
-    XCTAssertLessThan(essay.lowerBound, principles.lowerBound)
   }
 
   private func post(coverImage: String?) throws -> BlogPost {
