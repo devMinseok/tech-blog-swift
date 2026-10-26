@@ -60,6 +60,17 @@ final class MediumLayoutTests: XCTestCase {
     XCTAssertLessThan(hero.lowerBound, recent.lowerBound)
   }
 
+  func testAboutPageShowsEssayOnApps() throws {
+    let html = AboutView().render(layout: layout)
+    XCTAssertTrue(html.contains("<h2>앱은 사라질까?</h2>"))
+    XCTAssertTrue(html.contains("본질 없는 앱이 사라진다고 생각한다."))
+    XCTAssertTrue(html.contains("앱은 사라지지 않는다. 더 본질적인 방향으로 가고 있을 뿐이다."))
+    XCTAssertTrue(html.contains("href=\"https://github.com/owner/repo\""))
+    let essay = try XCTUnwrap(html.range(of: "앱은 사라질까?"))
+    let principles = try XCTUnwrap(html.range(of: "이 블로그의 원칙"))
+    XCTAssertLessThan(essay.lowerBound, principles.lowerBound)
+  }
+
   private func post(coverImage: String?) throws -> BlogPost {
     BlogPost(
       id: "post",
