@@ -1,31 +1,6 @@
 # 홈 첫 화면에 접속할 때마다 무작위로 하나씩 보여줄, 삶에 관한 긍정적인 명언입니다.
 # 한 줄에 하나씩 `- 문장 — 출처` 형식이고, 문장과 출처 사이는 " — "(em dash, 앞뒤 공백)입니다.
 # `#`로 시작하는 줄과 빈 줄은 무시합니다.
-#
-# 출처: chkim116/kadvice (https://github.com/chkim116/kadvice) scripts/fixtures/*.json 중 삶과 관련된 긍정적인 명언만 골랐습니다.
-# 아래는 원본 저장소의 MIT 라이선스 전문입니다.
-#
-# MIT License
-#
-# Copyright (c) 2023 changhoe kim
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
 
 - 나만이 내 인생을 바꿀 수 있다. 아무도 날 대신해 해줄 수 없다. — 캐롤 버넷
 - 긴 인생은 충분히 좋지 않을 수 있다. 그러나 좋은 인생은 충분히 길다. — 벤자민 프랭클린
