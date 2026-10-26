@@ -50,14 +50,36 @@ final class MediumLayoutTests: XCTestCase {
     XCTAssertLessThan(font.lowerBound, site.lowerBound)
   }
 
-  func testHomeHeroIsShortAndShowsMotif() throws {
-    let html = HomeView().render(posts: [try post(coverImage: nil)], layout: layout)
-    XCTAssertTrue(html.contains("AI 딸깍으로 개발이 너무 편해져버린 나머지 원초적인 걸 파보기로 했습니다."))
-    XCTAssertFalse(html.contains("SWIFT · ARCHITECTURE · NOTES"))
+  func testHomeHeroShowsFirstQuoteAndEmbedsAll() throws {
+    let quotes = [
+      Quote(text: "Talk is cheap. Show me the code.", source: "Linus Torvalds"),
+      Quote(text: "What I cannot create, I do not understand.", source: "Richard Feynman"),
+    ]
+    let html = HomeView().render(posts: [try post(coverImage: nil)], quotes: quotes, layout: layout)
+    XCTAssertTrue(
+      html.contains("<blockquote class=\"hero__quote-text\"><p>Talk is cheap. Show me the code.</p></blockquote>")
+    )
+    XCTAssertTrue(html.contains("<cite>Linus Torvalds</cite>"))
+    XCTAssertTrue(html.contains("<script type=\"application/json\" id=\"quotes\">"))
+    XCTAssertTrue(html.contains("What I cannot create, I do not understand."))
     XCTAssertFalse(html.contains("button-link"))
     let hero = try XCTUnwrap(html.range(of: "class=\"hero container\""))
     let recent = try XCTUnwrap(html.range(of: "최근 글"))
     XCTAssertLessThan(hero.lowerBound, recent.lowerBound)
+  }
+
+  func testEmbeddedQuotesCannotCloseScriptTag() throws {
+    let quotes = [Quote(text: "</script><b>bold</b>", source: "Tester")]
+    let html = HomeView().render(posts: [], quotes: quotes, layout: layout)
+    let json = try XCTUnwrap(html.range(of: "id=\"quotes\">"))
+    XCTAssertFalse(html[json.upperBound...].hasPrefix("[{\"source\":\"Tester\",\"text\":\"</script>"))
+    XCTAssertTrue(html.contains("<\\/script>"))
+  }
+
+  func testHomeWithoutQuotesShowsTagline() throws {
+    let html = HomeView().render(posts: [], quotes: [], layout: layout)
+    XCTAssertTrue(html.contains("배운 것을 오래 남기는 개발 기록"))
+    XCTAssertFalse(html.contains("id=\"quotes\""))
   }
 
   private func post(coverImage: String?) throws -> BlogPost {
