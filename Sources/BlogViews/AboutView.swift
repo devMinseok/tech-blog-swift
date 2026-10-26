@@ -12,11 +12,6 @@ public struct AboutView: Sendable {
       [("class", "container page about prose")],
       element("p", [("class", "eyebrow")], .text("ABOUT")),
       element("h1", [], .text("나에 대해서")),
-      element(
-        "p",
-        [("class", "lead")],
-        .text("안녕하세요, 강민석이에요. 4년 조금 넘게 iOS 앱을 만들다가, 지금은 다시 대학생으로 돌아와 공부하고 있어요.")
-      ),
       element("h2", [], .text("아이폰도 맥북도 없던 고1")),
       element(
         "p",
@@ -53,9 +48,9 @@ public struct AboutView: Sendable {
         element(
           "li",
           [],
-          element("strong", [], .text("Swift 뜯어보기")),
+          element("strong", [], .text("뜯어보기")),
           .text(
-            " — AI 덕분에 코드를 한 줄 한 줄 직접 짜는 일은 많이 줄었어요. 그래서 오히려 Swift와 도구들이 실제로 어떻게 동작하는지, 그 원초적인 부분을 이해하고 제대로 쓰고 싶어졌어요. 그 기록을 "
+            " — AI 덕분에 코드를 한 줄 한 줄 직접 짜는 일은 많이 줄었어요. 그래서 오히려 Swift와 같은 언어나 도구들이 실제로 어떻게 동작하는지, 그 원초적인 부분을 이해하고 제대로 쓰고 싶어졌어요. 그 기록을 "
           ),
           element("a", [("href", layout.router.path(for: .seriesList))], .text("뜯어보기 시리즈")),
           .text("에 남기고 있어요.")
