@@ -32,4 +32,25 @@
     observer.observe(document.body, { childList: true, subtree: true });
     syncGiscus(current() === 'dark' ? 'dark' : 'light');
   }
+
+  const quote = document.querySelector('[data-quote]');
+  if (quote) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    fetch('https://korean-advice-open-api.vercel.app/api/advice', { signal: controller.signal })
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error(String(response.status)))))
+      .then(({ message, author }) => {
+        if (typeof message !== 'string' || !message.trim()) return;
+        quote.querySelector('.hero__quote-text').textContent = message.trim();
+        const source = quote.querySelector('.hero__quote-source');
+        if (typeof author === 'string' && author.trim()) {
+          source.querySelector('cite').textContent = author.trim();
+        } else {
+          source.remove();
+        }
+        quote.hidden = false;
+      })
+      .catch(() => {})
+      .finally(() => clearTimeout(timer));
+  }
 })();

@@ -112,8 +112,6 @@ final class SiteGeneratorTests: XCTestCase {
       "Content/Series/teardown/spm.md"
     )
 
-    try write("- What I cannot create, I do not understand. — Richard Feynman", to: root, "Content/quotes.md")
-
     let output = root.appendingPathComponent("output", isDirectory: true)
     let configuration = SiteConfiguration(
       baseURL: "https://owner.github.io",
@@ -139,7 +137,6 @@ final class SiteGeneratorTests: XCTestCase {
     }
     XCTAssertTrue(try read("posts/hello-swift/index.html").contains("/repo/series/teardown/spm/"))
     XCTAssertTrue(try read("feed.xml").contains("Hello Swift"))
-    XCTAssertTrue(try read("index.html").contains("<cite>Richard Feynman</cite>"))
     XCTAssertTrue(try read("tags/Swift/index.html").contains("Hello Swift"))
     XCTAssertTrue(
       try read("sitemap.xml").contains("https://owner.github.io/repo/series/teardown/spm/")

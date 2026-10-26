@@ -65,7 +65,6 @@ public struct SiteGenerator: Sendable {
       includeDrafts: includeDrafts,
       series: series
     )
-    let quotes = try QuoteLoader().loadQuotes(from: root.appendingPathComponent("Content/quotes.md"))
     let catalog = SeriesCatalog(series: series, posts: posts)
     let tags = posts.sortedTagsForSite
     let staging = output.deletingLastPathComponent()
@@ -78,7 +77,7 @@ public struct SiteGenerator: Sendable {
 
       let layout = PageLayout(configuration: configuration)
       var pages: [(SiteRoute, String)] = [
-        (.home, HomeView().render(posts: posts, quotes: quotes, layout: layout)),
+        (.home, HomeView().render(posts: posts, layout: layout)),
         (.posts, PostListView().render(posts: posts, layout: layout)),
         (.seriesList, SeriesListView().render(catalog: catalog, layout: layout)),
         (.about, AboutView().render(layout: layout)),
