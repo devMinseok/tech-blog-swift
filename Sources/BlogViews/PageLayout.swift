@@ -229,7 +229,7 @@ public struct PageLayout: Sendable {
       element(
         "div",
         [("class", "container footer-inner")],
-        element("p", [], .text("© \(configuration.authorName). Swift로 만들고 GitHub Pages로 배포합니다.")),
+        element("p", [], .text("© \(configuration.authorName).")),
         element(
           "div",
           [("class", "footer-links")],

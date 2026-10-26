@@ -69,6 +69,18 @@ final class MediumLayoutTests: XCTestCase {
     XCTAssertLessThan(hero.lowerBound, recent.lowerBound)
   }
 
+  func testAboutPageIntroducesAuthor() throws {
+    let html = AboutView().render(layout: layout)
+    XCTAssertTrue(html.contains("<h1>나에 대해서</h1>"))
+    XCTAssertTrue(html.contains("<h2>아이폰도 맥북도 없던 고1</h2>"))
+    XCTAssertTrue(html.contains("<h2>결국 사용자를 위해</h2>"))
+    XCTAssertTrue(html.contains("<h2>요즘 공부하는 것</h2>"))
+    XCTAssertTrue(html.contains("<h2>달리는 시간</h2>"))
+    XCTAssertTrue(html.contains("href=\"/repo/series/\""))
+    XCTAssertTrue(html.contains("href=\"https://github.com/owner\""))
+    XCTAssertTrue(html.contains("href=\"https://github.com/owner/repo\""))
+  }
+
   func testEmbeddedQuotesCannotCloseScriptTag() throws {
     let quotes = [Quote(text: "</script><b>bold</b>", source: "Tester")]
     let html = HomeView().render(posts: [], quotes: quotes, layout: layout)
