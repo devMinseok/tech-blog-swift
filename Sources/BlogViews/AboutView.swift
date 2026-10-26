@@ -22,7 +22,7 @@ public struct AboutView: Sendable {
         "p",
         [],
         .text(
-          "개발을 처음 시작한 건 고등학교 1학년 때였어요. 그때는 아이폰도 맥북도 없었는데, 애플이 만든 생태계가 그냥 멋져 보였어요. 그 관심 하나로 혼자 공부하면서 아이폰 앱을 만들기 시작했고, 그게 4년 넘게 iOS 개발자로 일하는 데까지 이어졌어요."
+          "개발을 처음 시작한 건 고등학교 1학년 때였어요. 그때는 아이폰도 맥북도 없었는데, 애플이 만든 생태계가 그냥 멋져 보였어요. 그 관심 하나로 혼자 공부하면서 아이폰 앱을 만들기 시작했고 그렇게 4년 넘게 iOS 개발자로 일하게 됐어요."
         )
       ),
       element("h2", [], .text("결국 사용자를 위해")),
@@ -37,7 +37,7 @@ public struct AboutView: Sendable {
         "p",
         [],
         .text(
-          "AI가 많은 걸 대신해 주는 요즘엔 이 생각이 더 커졌어요. 정보를 찾아 정리해 주기만 하는 앱은 AI로 대체될 수 있겠지만, 사용자의 맥락을 이해하고 기기와 생태계를 잘 살린 앱은 오히려 더 빛날 거라고 믿어요. 앱이 사라지는 게 아니라, 본질 없는 앱이 사라지는 거라고요."
+          "AI가 많은 걸 대신해 주는 요즘엔 이 생각이 더 커졌어요. 정보를 찾아 정리해 주기만 하는 앱은 AI로 대체될 수 있겠지만 사용자의 맥락을 이해하고 기기와 생태계를 잘 살린 앱은 오히려 더 빛날 거라고 믿어요. 앱이 사라지는 게 아니라, 본질 없는 앱이 사라지는 거라고요."
         )
       ),
       element("h2", [], .text("요즘 공부하는 것")),
@@ -48,7 +48,7 @@ public struct AboutView: Sendable {
           "li",
           [],
           element("strong", [], .text("인프라와 서버")),
-          .text(" — iOS 밖의 세계가 궁금해져서, 요즘은 인프라와 서버 쪽을 공부하고 있어요.")
+          .text(" — iOS 밖의 세계가 궁금해져서 요즘은 인프라와 서버 쪽을 공부하고 있어요.")
         ),
         element(
           "li",
@@ -65,14 +65,14 @@ public struct AboutView: Sendable {
       element(
         "p",
         [],
-        .text("취미는 러닝이에요. 뛰는 동안만큼은 이런저런 생각을 덜어내고, 온전히 저한테만 집중할 수 있어서 좋아해요.")
+        .text("취미는 러닝이에요. 뛰는 동안만큼은 이런저런 생각을 덜어내고 온전히 저한테만 집중할 수 있어서 좋아해요.")
       ),
       element(
         "p",
         [],
         element("a", [("href", "https://github.com/\(owner)")], .text("GitHub ↗")),
         .text(" · "),
-        element("a", [("href", "https://github.com/\(repository)")], .text("이 블로그 소스 보기 ↗"))
+        element("a", [("href", "https://www.linkedin.com/in/devminseok/")], .text("Linked In ↗"))
       )
     )
     return layout.render(
