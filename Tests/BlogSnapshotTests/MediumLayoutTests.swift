@@ -50,25 +50,37 @@ final class MediumLayoutTests: XCTestCase {
     XCTAssertLessThan(font.lowerBound, site.lowerBound)
   }
 
-  func testHomeQuoteStartsHiddenUntilFetched() throws {
-    let html = HomeView().render(posts: [try post(coverImage: nil)], layout: layout)
-    XCTAssertTrue(html.contains("<section class=\"hero container\" data-quote hidden>"))
-    XCTAssertTrue(html.contains("<h1 class=\"hero__quote-text\"></h1>"))
-    XCTAssertTrue(html.contains("<cite></cite>"))
-    XCTAssertFalse(html.contains("id=\"quotes\""))
+  func testHomeHeroShowsFirstQuoteAndEmbedsAll() throws {
+    let quotes = [
+      Quote(text: "Talk is cheap. Show me the code.", source: "Linus Torvalds"),
+      Quote(text: "What I cannot create, I do not understand.", source: "Richard Feynman"),
+    ]
+    let html = HomeView().render(posts: [try post(coverImage: nil)], quotes: quotes, layout: layout)
+    XCTAssertTrue(
+      html.contains("<h1 class=\"hero__quote-text\">Talk is cheap. Show me the code.</h1>")
+    )
+    XCTAssertFalse(html.contains("visually-hidden"))
+    XCTAssertTrue(html.contains("<cite>Linus Torvalds</cite>"))
+    XCTAssertTrue(html.contains("<script type=\"application/json\" id=\"quotes\">"))
+    XCTAssertTrue(html.contains("What I cannot create, I do not understand."))
+    XCTAssertFalse(html.contains("button-link"))
     let hero = try XCTUnwrap(html.range(of: "class=\"hero container\""))
     let recent = try XCTUnwrap(html.range(of: "최근 글"))
     XCTAssertLessThan(hero.lowerBound, recent.lowerBound)
   }
 
-  func testSiteScriptFetchesQuoteAndRevealsOnlyOnSuccess() throws {
-    let script = URL(fileURLWithPath: #filePath)
-      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-      .appendingPathComponent("Public/scripts/site.js")
-    let js = try String(contentsOf: script, encoding: .utf8)
-    XCTAssertTrue(js.contains("https://korean-advice-open-api.vercel.app/api/advice"))
-    XCTAssertTrue(js.contains("AbortController"))
-    XCTAssertTrue(js.contains("hidden = false"))
+  func testEmbeddedQuotesCannotCloseScriptTag() throws {
+    let quotes = [Quote(text: "</script><b>bold</b>", source: "Tester")]
+    let html = HomeView().render(posts: [], quotes: quotes, layout: layout)
+    let json = try XCTUnwrap(html.range(of: "id=\"quotes\">"))
+    XCTAssertFalse(html[json.upperBound...].hasPrefix("[{\"source\":\"Tester\",\"text\":\"</script>"))
+    XCTAssertTrue(html.contains("<\\/script>"))
+  }
+
+  func testHomeWithoutQuotesShowsTagline() throws {
+    let html = HomeView().render(posts: [], quotes: [], layout: layout)
+    XCTAssertTrue(html.contains("배운 것을 오래 남기는 개발 기록"))
+    XCTAssertFalse(html.contains("id=\"quotes\""))
   }
 
   private func post(coverImage: String?) throws -> BlogPost {
