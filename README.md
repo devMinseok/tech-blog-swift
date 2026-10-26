@@ -19,12 +19,13 @@ Swift와 iOS 개발을 하며 배운 것을 기록하는 기술 블로그입니�
 - **배포**: GitHub Actions가 테스트하고 GitHub Pages로 배포합니다. 서버나 데이터베이스는 없습니다.
 - **댓글과 반응**: GitHub Discussions 기반의 [giscus](https://giscus.app/ko)를 씁니다.
 
-로컬에서 띄워 보려면 Swift 6.3.3이 필요합니다.
+로컬에서 띄워 보려면 Swift 6.2 이상(Xcode 26 이상)이 필요합니다. 아래 명령은 초안을 포함해 빌드하고, 브라우저를 열고, 파일을 저장할 때마다 다시 빌드합니다.
 
 ```bash
-swift run BlogBuilder --base-url http://127.0.0.1:8000 --base-path ""
-python3 -m http.server 8000 --directory .build/site
+make preview
 ```
+
+다른 명령은 `make`로 확인할 수 있습니다.
 
 ## 라이선스
 
