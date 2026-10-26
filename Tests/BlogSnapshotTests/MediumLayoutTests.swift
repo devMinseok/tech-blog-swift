@@ -57,8 +57,9 @@ final class MediumLayoutTests: XCTestCase {
     ]
     let html = HomeView().render(posts: [try post(coverImage: nil)], quotes: quotes, layout: layout)
     XCTAssertTrue(
-      html.contains("<blockquote class=\"hero__quote-text\"><p>Talk is cheap. Show me the code.</p></blockquote>")
+      html.contains("<h1 class=\"hero__quote-text\">Talk is cheap. Show me the code.</h1>")
     )
+    XCTAssertFalse(html.contains("visually-hidden"))
     XCTAssertTrue(html.contains("<cite>Linus Torvalds</cite>"))
     XCTAssertTrue(html.contains("<script type=\"application/json\" id=\"quotes\">"))
     XCTAssertTrue(html.contains("What I cannot create, I do not understand."))

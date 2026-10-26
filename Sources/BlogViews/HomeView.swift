@@ -9,7 +9,7 @@ public struct HomeView: Sendable {
   public func render(posts: [BlogPost], quotes: [Quote] = [], layout: PageLayout) -> String {
     let recent = Array(posts.prefix(5))
     let body = fragment([
-      hero(quotes: quotes, siteName: layout.configuration.siteName),
+      hero(quotes: quotes),
       element(
         "section",
         [("class", "container section")],
@@ -57,7 +57,7 @@ public struct HomeView: Sendable {
   }
 
   /// 명언이 있으면 빌드 때 첫 명언을 넣어 두고, 페이지를 열 때마다 인라인 스크립트가 무작위로 바꿉니다.
-  private func hero(quotes: [Quote], siteName: String) -> Node {
+  private func hero(quotes: [Quote]) -> Node {
     guard let first = quotes.first else {
       return element(
         "section",
@@ -68,11 +68,10 @@ public struct HomeView: Sendable {
     return element(
       "section",
       [("class", "hero container")],
-      element("h1", [("class", "visually-hidden")], .text(siteName)),
       element(
         "figure",
         [("class", "hero__quote"), ("data-quote", "")],
-        element("blockquote", [("class", "hero__quote-text")], element("p", [], .text(first.text))),
+        element("h1", [("class", "hero__quote-text")], .text(first.text)),
         element("figcaption", [("class", "hero__quote-source")], .text("— "), element("cite", [], .text(first.source)))
       ),
       element("script", [("type", "application/json"), ("id", "quotes")], .raw(quotesJSON(quotes))),
@@ -80,7 +79,7 @@ public struct HomeView: Sendable {
         "script",
         [],
         .raw(
-          "(()=>{try{const q=JSON.parse(document.getElementById('quotes').textContent);const p=q[Math.floor(Math.random()*q.length)];const f=document.querySelector('[data-quote]');f.querySelector('p').textContent=p.text;f.querySelector('cite').textContent=p.source}catch(e){}})()"
+          "(()=>{try{const q=JSON.parse(document.getElementById('quotes').textContent);const p=q[Math.floor(Math.random()*q.length)];const f=document.querySelector('[data-quote]');f.querySelector('h1').textContent=p.text;f.querySelector('cite').textContent=p.source}catch(e){}})()"
         )
       )
     )
