@@ -90,6 +90,9 @@ button, input { font: inherit; }
 .eyebrow a:hover { color: var(--text); }
 .hero h1 { margin: 0; font-family: var(--font-serif); font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 400; line-height: 1.2; letter-spacing: -.03em; }
 .hero__description { max-width: 36rem; margin: .9rem 0 0; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.2rem); line-height: 1.5; }
+.hero__quote { max-width: 52rem; margin: 0; }
+.hero__quote-source { margin-top: 1rem; color: var(--muted); font-size: .95rem; }
+.hero__quote-source cite { font-style: normal; }
 .button-link { display: inline-flex; padding: .6rem 1.4rem; border-radius: 999px; background: var(--text); color: var(--bg); font-size: 1rem; text-decoration: none; }
 .button-link:hover { background: var(--accent); color: #fff; }
 
