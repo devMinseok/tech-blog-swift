@@ -27,6 +27,7 @@ public enum ContentError: Error, LocalizedError, Equatable {
   case unknownSeries(file: String, series: String)
   case unknownTopic(file: String, series: String, topic: String)
   case duplicatePart(series: String, topic: String, part: Int)
+  case invalidQuote(line: Int, value: String)
 
   public var errorDescription: String? {
     switch self {
@@ -80,6 +81,8 @@ public enum ContentError: Error, LocalizedError, Equatable {
       "\(file): \(series) 시리즈에 없는 주제입니다: \(topic)"
     case .duplicatePart(let series, let topic, let part):
       "\(series)/\(topic): \(part)편이 중복되었습니다."
+    case .invalidQuote(let line, let value):
+      "quotes.md:\(line): 명언은 '- 문장 — 출처' 형식이어야 합니다: \(value)"
     }
   }
 }

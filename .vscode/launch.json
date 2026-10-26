@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:tech-blog-swift}",
+            "name": "Debug BlogBuilder",
+            "target": "BlogBuilder",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug BlogBuilder"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:tech-blog-swift}",
+            "name": "Release BlogBuilder",
+            "target": "BlogBuilder",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release BlogBuilder"
+        }
+    ]
+}
